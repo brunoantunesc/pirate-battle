@@ -24,3 +24,8 @@ Foundation and playable core are integrated. Production build and type checking 
 
 Follow-up: baseline comparison run was interrupted after a desktop combat timeout. The preceding snapshot-generation run passed all 14 cases. Browser repeatability remains IN_PROGRESS; do not interpret initial baseline generation as regression approval.
 
+
+## Coverage milestone — 2026-11-25
+
+Full Playwright suite: 49 passed, 1 intentional desktop multitouch duplicate skipped, in 2.5 minutes. Six existing visual baselines matched without updates. All twelve official groups now have browser evidence mapped in COVERAGE-AUDIT.md. Unit suite:42 passed. Typecheck, lint and production build passed; bundle-size warning remains. Fixed storage quota completion and dialog keyboard/focus issues. Visibility is an emulated browser signal; actual OS visibility smoke, heap/GPU profiling, 180-second FPS measurement and public deployment remain outstanding.
+

@@ -59,7 +59,7 @@ window.__pirateTest.setManualClock(false);
 5. Export `JSON.stringify(window.pirateProfile, null, 2)` and retain the configuration, hardware information, viewport, browser version, and completion screenshot alongside it. Capture a browser Performance trace of representative combat; keep tracing overhead separate from the untraced FPS measurement.
 6. Report the final active sample's FPS, P95 frame interval, frame count and maximum entity count. Explain missing final samples: the UI removes the session instrumentation shortly after completion, and this one-second sampler may end just before the exact final tick. Use the browser trace or a finer observer if exact final-tick evidence is required.
 
-`metrics().fps` is rendered running-frame count divided by accumulated Pixi elapsed milliseconds. P95 sorts up to the first 15,000 running-frame intervals and picks index `floor(N * 0.95)`. `maxEntities` includes player, enemies, projectiles and effects. Metrics include running-state rendering, so time spent with the manual clock enabled must not be mixed into performance results. The current counters are not automatically reset when switching clocks; enable real time immediately after loading and disclose any warm-up interval, or add an explicit measurement reset before treating the result as final evidence.
+`metrics().fps` is rendered running-frame count divided by accumulated Pixi elapsed milliseconds. P95 sorts up to the first 15,000 running-frame intervals and picks index `floor(N * 0.95)`. `maxEntities` includes player, enemies, projectiles and effects. Manual-clock sessions now stop the Pixi ticker and render only on explicit clock advances; idle manual time does not enter these metrics. The current counters are not automatically reset when switching clocks; enable real time immediately after loading and disclose any warm-up interval, or add an explicit measurement reset before treating the result as final evidence.
 
 The player may die before three minutes at aggressive spawn settings. The production run must preserve normal rules and record the actual completion reason. If no complete run can be obtained, document that unmet requirement instead of reporting an accelerated or invulnerable session as a normal match.
 
@@ -87,3 +87,4 @@ Store the measured summary here and attach raw samples/traces/heap evidence thro
 | Investigation of any retained resources   | TODO   |
 
 Until these rows have real artifacts, performance remains unverified.
+

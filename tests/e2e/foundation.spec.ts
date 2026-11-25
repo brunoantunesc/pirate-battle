@@ -7,6 +7,18 @@ test("options validate and survive refresh", async ({ page }) => {
     .first()
     .click();
   const dialog = page.getByRole("dialog");
+  for (const value of ['', '181']) {
+    await dialog.getByLabel('Game session time').fill(value);
+    await dialog.getByRole('button', { name: 'Save Options' }).click();
+    await expect(dialog.getByRole('alert')).toBeVisible();
+  }
+  await dialog.getByLabel('Game session time').fill('60');
+  for (const value of ['', '0', '-1', '16']) {
+    await dialog.getByLabel('Enemy spawn time').fill(value);
+    await dialog.getByRole('button', { name: 'Save Options' }).click();
+    await expect(dialog.getByRole('alert')).toBeVisible();
+  }
+  await dialog.getByLabel('Enemy spawn time').fill('1');
   await dialog.getByLabel("Game session time").fill("59");
   await dialog.getByRole("button", { name: "Save Options" }).click();
   await expect(dialog.getByRole("alert")).toContainText("60–180");

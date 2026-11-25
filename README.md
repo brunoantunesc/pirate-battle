@@ -80,7 +80,7 @@ To reproduce recovery, select **Unavailable during match completion**, complete 
 | `npm test`            | Vitest simulation and HTTP/data tests                     |
 | `npm run test:e2e`    | Playwright desktop and mobile Chromium suites             |
 | `npm run test:e2e:ui` | Interactive Playwright runner                             |
-| `npm run test:visual` | Run tests matching `visual`; baseline coverage is pending |
+| `npm run test:visual` | Run tests matching `visual`; compare the six versioned baseline images |
 | `npm run test:report` | Open the generated Playwright HTML report                 |
 
 Install the test browser with `npx playwright install chromium` before the first E2E run. Playwright starts Vite automatically unless the local server is already running. Every test receives an isolated browser context. Failed runs retain traces and screenshots under `test-results`; HTML reports are generated under `playwright-report`. These generated directories are ignored by Git: attach the relevant report directories to the final submission or CI artifact rather than claiming a checked-in report exists.
@@ -93,7 +93,7 @@ The repository includes `vercel.json`: build with `npm run build`, publish `dist
 
 ## Evidence and remaining work
 
-The current unit run passed **42 tests** (23 simulation, 19 data/HTTP). The initial Foundation suite passed four browser cases across desktop and mobile Chromium. Additional lifecycle and visual tests are implemented and under validation; the comprehensive browser test groups, approved visual baselines, production performance measurements, memory investigation, and public deployment have separate completion criteria.
+Validation on 2026-11-25: 42 unit tests passed; the complete browser suite passed 49 cases with one intentional desktop multitouch skip. Typecheck, lint and production build passed. See docs/COVERAGE-AUDIT.md for all twelve official groups and explicit evidence limits. Production profiling, heap investigation and public deployment remain pending.
 
 - [Official challenge, preserved verbatim](docs/CHALLENGE.md)
 - [Requirement checklist and evidence](docs/REQUIREMENTS.md)
@@ -104,3 +104,4 @@ The current unit run passed **42 tests** (23 simulation, 19 data/HTTP). The init
 ## Asset credits
 
 Game art, UI sprites, reference images, tiles, and WAV sounds are supplied by [Jungle Gaming's challenge repository](https://github.com/junglegaming/game-developer-challenge), source commit `315891441be81ca0bff75cf3c2b0cd2f27f119cd`. They are preserved in `public/assets`. No supplementary downloaded artwork or fonts are used. The supplied repository does not include an asset license file; no additional redistribution license is inferred here. Dependencies retain their respective package licenses.
+
