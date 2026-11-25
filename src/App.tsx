@@ -10,7 +10,6 @@ import {
   useRegisterMatch,
   useRegistrationStatus,
   getLastMatch,
-  saveLastMatch,
 } from "./api/client";
 import { PLAYER_ID, type MatchRecord } from "./api/contracts";
 
@@ -26,14 +25,24 @@ function Dialog({
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const previous = document.activeElement;
-    ref.current?.showModal();
+    const dialog = ref.current;
+    dialog?.showModal();
     return () => {
+      dialog?.close();
       if (previous instanceof HTMLElement) previous.focus();
     };
   }, []);
   return (
     <dialog
       ref={ref}
+      onKeyDown={(event) => {
+        if (event.key !== 'Tab') return;
+        const controls = ref.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]');
+        if (!controls?.length) return;
+        const first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }}
       onCancel={(event) => {
         event.preventDefault();
         onClose();
@@ -160,7 +169,9 @@ function Results({
           ? "Match registered"
           : registration.isPending
             ? "Registering match…"
-            : "Registration pending — your result is saved on this device."}
+            : status === "pending"
+              ? "Registration pending — your result is saved on this device."
+              : "Your result is only available in this session. Local storage could not save it. Retry before leaving or refreshing."}
       </p>
       {status !== "confirmed" && (
         <button
@@ -356,8 +367,9 @@ export function App() {
       reason: simulation.state.reason,
       config: structuredClone(simulation.config),
     };
-    saveLastMatch(next);
-    enqueueMatch(next);
+    // Result navigation must succeed even when browser storage is full or blocked.
+    // The mutation queues before HTTP and exposes failures without losing this session's result.
+    try { enqueueMatch(next); } catch { /* Results reports the absence of a durable record. */ }
     setResult(next);
     registration.mutate(next);
     setScreen("result");

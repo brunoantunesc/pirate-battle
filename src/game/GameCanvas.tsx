@@ -99,7 +99,10 @@ export function GameCanvas({ simulation, onReady, onError, sound = true }: Props
             for (let step = 0; step < steps; step++) simulation.step();
             draw();
           },
-          setManualClock: (manual: boolean) => { manualClock = manual; },
+          setManualClock: (manual: boolean) => {
+            manualClock = manual;
+            if (manual) application?.stop(); else application?.start();
+          },
           metrics: () => {
             const sorted = [...frameTimes].sort((a, b) => a - b);
             return { frames, fps: elapsed ? frames * 1000 / elapsed : 0, p95FrameMs: sorted[Math.floor(sorted.length * 0.95)] ?? 0, maxEntities, activeCanvases, activeInputBindings, resolution };
@@ -115,7 +118,10 @@ export function GameCanvas({ simulation, onReady, onError, sound = true }: Props
           }
           scene?.render();
         });
-        draw(); application.start();
+        draw();
+        // A controlled clock renders explicitly after advancing; idle frames must not
+        // consume GPU time or contaminate real-time profiling samples.
+        if (!manualClock) application.start();
         setLoadState('ready'); callbacks.current.onReady?.();
       } catch (cause: unknown) {
         // Failed async initialization may not have reached Application's normal destroy contract.
