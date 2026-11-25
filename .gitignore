@@ -1,0 +1,8 @@
+node_modules/
+dist/
+upstream-reference/
+test-results/
+playwright-report/
+*.log
+*.tsbuildinfo
+.env.local
