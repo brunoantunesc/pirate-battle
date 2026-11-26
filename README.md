@@ -2,7 +2,7 @@
 
 A single-player naval shooter for the Jungle Gaming React & PixiJS technical challenge. Sail between islands, fire independent cannon batteries, and survive rival Chasers and Shooters. Every enemy sunk by your weapons earns one point.
 
-**Public demo: [Play Pirate Battle](https://pirate-battle-ivory.vercel.app).** Published on Vercel; 24 desktop/mobile smoke tests passed on 2026-11-26. See [deployment evidence](docs/DEPLOYMENT.md).
+**Public demo: [Play Pirate Battle](https://pirate-battle-ivory.vercel.app).** Published on Vercel; 38 desktop/mobile public tests passed on 2026-11-26. See [deployment evidence](docs/DEPLOYMENT.md).
 
 **Source repository:** [brunoantunesc/pirate-battle](https://github.com/brunoantunesc/pirate-battle).
 
@@ -91,7 +91,7 @@ For deterministic combat tests use `/?test=1`. The opt-in `window.__pirateTest` 
 
 ## Deployment
 
-The repository includes `vercel.json`: build with `npm run build`, publish `dist`, and avoid caching `mockServiceWorker.js`. No environment variables are needed. Deployment must be authorized and performed against the solution's own repository/account, never the original challenge remote. After publishing, verify assets, MSW interception, a completed registration, both ledger tabs, refresh, and a mobile session at the returned public URL. Verified runtime revision: `4771d73`, including accessibility and memory corrections. Subsequent documentation commits record public verification.
+The repository includes `vercel.json`: build with `npm run build`, publish `dist`, and avoid caching `mockServiceWorker.js`. No environment variables are needed. Deployment must be authorized and performed against the solution's own repository/account, never the original challenge remote. After publishing, verify assets, MSW interception, a completed registration, both ledger tabs, refresh, and a mobile session at the returned public URL. Verified runtime revision: `f6a4877`, including safe continuous spawning, accessibility and memory corrections. Subsequent documentation commits record public verification.
 
 ## Evidence and validation scope
 
@@ -105,7 +105,7 @@ Final validation on 2026-11-26: 46 unit tests passed; the complete optimized-bui
 - [Spawn correction unit report](docs/evidence/spawn-unit.json)
 - [Spawn correction browser report](docs/evidence/spawn-browser-report/index.html)
 - [Previous optimized-build browser report](docs/evidence/browser-report/index.html)
-- [Public smoke HTML report](docs/evidence/public-browser-report/index.html)
+- [Public smoke HTML report](docs/evidence/spawn-public-report/index.html)
 - [Performance measurements and limitations](docs/PERFORMANCE.md)
 
 ## Asset credits

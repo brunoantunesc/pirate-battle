@@ -2,7 +2,7 @@
 
 Production URL: https://pirate-battle-ivory.vercel.app
 
-Vercel project: `bruno-costa2/pirate-battle`. Deployment `dpl_B4KpryfvWtAwjD29pKKN4SgQFCYr` reached READY on 2026-11-26. Runtime source: commit `4771d73`. The anonymous public page and service worker returned HTTP 200; the page references the verified `index-C9LUbyzR.js` build. This update includes accessibility corrections and cleanup of unused MSW diagnostic response streams.
+Vercel project: `bruno-costa2/pirate-battle`. Current deployment `dpl_7wC2JQ1LqekpKpM4HBAuJkMuq3BB` reached READY on 2026-11-26. Runtime source: commit `f6a4877`. The anonymous public page returned HTTP 200 and references the verified `index-Bxwh77Td.js` build. This update removes the arbitrary enemy cap and preserves safe blocked arrivals. Earlier deployments below are historical evidence.
 
 ## Account and authorization
 
@@ -42,3 +42,7 @@ Result: **20 passed in 1.1 minutes**, Chromium 159.0.8154.6, desktop and Pixel 7
 Runtime commit `4771d73` was published as deployment `dpl_B4KpryfvWtAwjD29pKKN4SgQFCYr`. The anonymous page and worker returned HTTP 200 and the public HTML references the same `index-C9LUbyzR.js` artifact as the locally validated build.
 
 The same public smoke command above, with `tests/e2e/accessibility.spec.ts` also included, passed **24 tests in 1.3 minutes**, desktop and mobile. The [current public HTML report](evidence/public-browser-report/index.html) includes the contrast measurements. This supersedes the earlier 20-test deployment result; the previous report is preserved as historical evidence.
+
+## Continuous-spawn release — 2026-11-26
+
+Runtime `f6a4877`, deployment `dpl_7wC2JQ1LqekpKpM4HBAuJkMuq3BB`, is publicly available without authentication. The public build matches `index-Bxwh77Td.js`. All **38 public desktop/mobile tests passed in 2.3 minutes**, covering accessibility, combat, foundation, lifecycle and network recovery. Run the previous smoke command with `tests/e2e/combat.spec.ts` and `tests/e2e/accessibility.spec.ts` added. The [current public report](evidence/spawn-public-report/index.html) records this run.

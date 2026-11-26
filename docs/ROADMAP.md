@@ -1,6 +1,6 @@
 # Delivery roadmap
 
-Updated 2026-11-26. The original estimate was two working days. The currently published game remains available at https://pirate-battle-ivory.vercel.app; runtime revision is `4771d73`. Changes are delivered in independently reviewable commits, and runtime updates are published only after applicable checks pass.
+Updated 2026-11-26. The original estimate was two working days. The currently published game remains available at https://pirate-battle-ivory.vercel.app; runtime revision is `f6a4877`. Changes are delivered in independently reviewable commits, and runtime updates are published only after applicable checks pass.
 
 ## Current status
 
@@ -39,6 +39,6 @@ The supplied assets originate from upstream commit `315891441be81ca0bff75cf3c2b0
 
 ## Safe-spawn correction
 
-The correction is developed in an isolated worktree while the public demo, GitHub master and delivery-ready-2026-11-26 tag retain the verified previous runtime. The arbitrary 36-enemy cap is removed. Safe fallback and queued blocked arrivals are tested; 46 unit cases pass, including 179 simultaneous stationary enemies and backward compatibility for previous capped match records. The final clean-checkout check remains the last planned step.
+The correction was developed in an isolated worktree and promoted only after passing checks. The previous runtime remains available through delivery-ready-2026-11-26; the corrected source is preserved in delivery-spawn-verified-2026-11-26. The arbitrary 36-enemy cap is removed. Safe fallback and queued blocked arrivals are tested; 46 unit cases pass, including 179 simultaneous stationary enemies and backward compatibility for previous capped match records. The final clean-checkout check remains the last planned step.
 
-The isolated spawn correction passed typecheck, lint, build, all 46 unit tests and all 53 browser checks (one intentional skip), including unchanged visual baselines. It is ready for promotion; clean-checkout verification remains last.
+The isolated spawn correction passed typecheck, lint, build, all 46 unit tests and all 53 browser checks (one intentional skip), including unchanged visual baselines. It is published on GitHub and Vercel; clean-checkout verification remains last.
