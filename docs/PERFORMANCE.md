@@ -1,90 +1,47 @@
-# Performance evidence
+# Production performance and memory evidence
 
-## Current status
+Measured on 2026-11-25 against an optimized Vite preview of gameplay commit `d35751401d754dae038b81224ff4e64b6d432cfe`. Raw observations are preserved in [GPU profile](evidence/profile.json), [software profile](evidence/profile-software.json), and [hardware](evidence/hardware.json). These are measurements, not estimated targets.
 
-**Not measured yet.** No FPS, frame-time percentile, heap-growth conclusion, or 60-FPS compliance claim is available. Unit tests and TypeScript/lint checks do not establish browser performance. A three-minute production-build run and five start/play/exit memory cycles remain required before delivery.
+## Environment and method
 
-The renderer already exposes opt-in counters and frame metrics. The instructions below are a reproducible measurement procedure, not evidence that the procedure has been executed.
+- Windows 11 Home 10.0.26300; AMD Ryzen 5 5600 (6 cores/12 threads), approximately 32 GiB RAM; NVIDIA RTX 3060, driver 32.0.16.1088.
+- Chromium 159.0.8154.6, headless, viewport 1440x900, devicePixelRatio 1; logical arena 1200x720 and Pixi resolution 1.
+- GPU run explicitly enabled GPU and ANGLE Direct3D11. Browser metadata confirms the RTX 3060 backend. The default headless run used SwiftShader software rendering despite the installed GPU.
+- Real 180-second match, seed 42, spawn interval 15 seconds, default balance otherwise. Actual W/D/Space/Q/E keyboard holds were used. No manual clock advancement, artificial health, suppressed collisions, or assigned scores.
+- The normal production ticker advanced gameplay. A read-only rAF observer sampled state and captured the terminal tick before UI disposal; its overhead is included. Background host activity was not strictly isolated.
 
-## Reference environment record
+## Three-minute results
 
-Record the actual environment alongside each measurement:
+| Backend               | Active time | Frames | Mean FPS | P95 frame interval | Maximum entities | Result                          |
+| --------------------- | ----------: | -----: | -------: | -----------------: | ---------------: | ------------------------------- |
+| RTX 3060 / Direct3D11 |        180s |  10795 |    59.97 |            16.70ms |               24 | Time completed; 22 HP; 8 points |
+| SwiftShader software  |        180s |   2777 |    15.37 |            83.40ms |               24 | Time completed; 22 HP; 8 points |
 
-| Field         | Value to capture                                                                                   |
-| ------------- | -------------------------------------------------------------------------------------------------- |
-| Source        | Exact Git commit and build timestamp                                                               |
-| Hardware      | CPU model, GPU model, physical RAM, power mode                                                     |
-| OS            | Version/build                                                                                      |
-| Browser       | Exact Chromium/Chrome version; headful or headless                                                 |
-| Graphics      | Hardware acceleration state; renderer; any throttling                                              |
-| Display       | Viewport width/height, screen refresh rate, devicePixelRatio                                       |
-| Pixi          | Actual capped renderer resolution                                                                  |
-| Configuration | Full `src/game/config.ts` snapshot with 180-second duration and chosen spawn interval              |
-| Seed          | 42 for the reproducible instrumented run                                                           |
-| Assets        | Cold or warm cache, recorded separately                                                            |
-| Observation   | Active gameplay seconds, completion reason, frame count, FPS, P95 frame interval, maximum entities |
+The 60 FPS target is met to normal frame-timing precision in this GPU configuration. It is NOT met in the software-rendered configuration. This sparse legal spawn configuration does not establish performance at the default 3-second spawn interval, maximum enemy density, high DPR, or on physical mobile hardware. No general 60 FPS guarantee is claimed.
 
-Do not omit software rendering or headless limitations. Do not generalize one machine's measurements into a guarantee for all mobile devices.
+## Five start/play/exit cycles
 
-## Three-minute production run
+Each cycle played 20 active seconds using the real ticker and inputs, then paused, abandoned and collected V8 garbage. A warm-cache baseline and final heap snapshot were parsed, with CDP DOM and heap counters recorded after each exit.
 
-1. Run `npm ci`, `npm run build`, then `npm run preview -- --port 4173`.
-2. Open `http://127.0.0.1:4173/?test=1` in the target browser. Use a clean browser profile or reset demo records. Set session time to 180 seconds; retain the documented spawn interval. Keep network scenario Success.
-3. Start the match and wait for assets to finish loading. The test URL initially freezes the simulation clock. Before enabling real time, install a measurement sampler in DevTools:
+| GPU run stage | JS heap after GC (bytes) | DOM nodes | DOM listeners | Mounted canvases |
+| ------------- | -----------------------: | --------: | ------------: | ---------------: |
+| Warm baseline |                  8401152 |       267 |           204 |                0 |
+| Cycle1        |                  8633864 |       243 |           200 |                0 |
+| Cycle2        |                  8825892 |       321 |           207 |                0 |
+| Cycle3        |                  8791936 |       243 |           200 |                0 |
+| Cycle4        |                  8977140 |       321 |           207 |                0 |
+| Cycle5        |                  9036964 |       321 |           207 |                0 |
 
-```js
-window.pirateProfile = [];
-window.pirateProfileTimer = setInterval(() => {
-  const api = window.__pirateTest;
-  if (!api) {
-    clearInterval(window.pirateProfileTimer);
-    return;
-  }
-  const state = api.snapshot();
-  window.pirateProfile.push({
-    time: state.time,
-    status: state.status,
-    reason: state.reason,
-    hp: state.player.hp,
-    enemies: state.enemies.length,
-    projectiles: state.projectiles.length,
-    effects: state.effects.length,
-    ...api.metrics(),
-  });
-}, 1000);
-window.__pirateTest.setManualClock(false);
-```
+Every active session had exactly one instrumented canvas and one input binding. Every exit removed the mounted canvas and test API. Native heap counts remained unchanged: 2 HTMLCanvasElement objects, 2 WebGLRenderingContext objects, 1 WebGL2RenderingContext object, including shared renderer/asset resources outside the mounted canvas. No accumulated native canvas/context count was observed.
 
-4. Focus the game and use actual controls to survive the full 180 active seconds. DevTools focus changes can pause the game; use Resume deliberately. Do not use manual clock advancement, alter health, suppress collisions, or remove enemies for the measured run. An early death is a partial sample, not the required three-minute result; retain it as such and rerun.
-5. Export `JSON.stringify(window.pirateProfile, null, 2)` and retain the configuration, hardware information, viewport, browser version, and completion screenshot alongside it. Capture a browser Performance trace of representative combat; keep tracing overhead separate from the untraced FPS measurement.
-6. Report the final active sample's FPS, P95 frame interval, frame count and maximum entity count. Explain missing final samples: the UI removes the session instrumentation shortly after completion, and this one-second sampler may end just before the exact final tick. Use the browser trace or a finer observer if exact final-tick evidence is required.
+Heap increased 635812 bytes (about 621 KiB) from the GPU warm baseline and was not monotonically increasing. DOM/listener counts oscillated within two observed levels rather than growing each cycle. The software run increased 609316 bytes monotonically, while DOM/listener counts and native graphics counts stayed constant. These observations do not prove a leak-free heap: runtime caches, framework work and instrumentation may contribute; minification obscures application constructor names, and retaining paths were not fully classified. GPU allocation and process RSS were not measured. A longer plateau/retainer investigation remains an explicit limitation, not a hidden pass.
 
-`metrics().fps` is rendered running-frame count divided by accumulated Pixi elapsed milliseconds. P95 sorts up to the first 15,000 running-frame intervals and picks index `floor(N * 0.95)`. `maxEntities` includes player, enemies, projectiles and effects. Manual-clock sessions now stop the Pixi ticker and render only on explicit clock advances; idle manual time does not enter these metrics. The current counters are not automatically reset when switching clocks; enable real time immediately after loading and disclose any warm-up interval, or add an explicit measurement reset before treating the result as final evidence.
+## Reproduce
 
-The player may die before three minutes at aggressive spawn settings. The production run must preserve normal rules and record the actual completion reason. If no complete run can be obtained, document that unmet requirement instead of reporting an accelerated or invulnerable session as a normal match.
+1. `npm ci` and `npm run build`.
+2. `node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4173`.
+3. In PowerShell: `$env:PROFILE_GPU='d3d11'; npm run profile`. Omit PROFILE_GPU for the default software/headless comparison on this environment.
+4. The script runs the real match and five 20-second cycles, prints progress, and writes `docs/evidence/profile.json` and its result image. Preserve previous files before rerunning.
+5. Set PROFILE_SAVE_HEAPS=1 to save full snapshots under ignored test-results/profile for deeper retaining-path analysis. PROFILE_HEADFUL=1 allows an interactive-browser comparison. PROFILE_URL can target an optimized preview elsewhere.
 
-## Five-cycle memory investigation
-
-1. Use the same optimized build and recorded hardware. Take a baseline after initial assets are warmed. Keep the shared texture cache in mind: one-time growth from loading assets is expected.
-2. Take a DevTools heap snapshot after explicit garbage collection. Record JS heap size, DOM nodes, listener counts where available, and retained `Application`, `BattleRenderer`, canvas, audio, ticker and controller objects.
-3. Repeat five times: start, play for a fixed documented interval (for example 20 active seconds), pause, abandon, and return to the menu. Exercise real inputs and wait for the canvas to disappear. Confirm one canvas and one input binding during each active session, never increasing across cycles.
-4. After each cycle, collect garbage using DevTools and take a snapshot. Compare retained object counts and retaining paths, not merely the browser process RSS. GPU allocation and allocator reservations may remain high without retaining live sessions.
-5. Record a table with cycle number, active play duration, retained canvases/applications, heap size, object deltas, and any listener/ticker retention. Investigate monotonic growth and attach relevant retaining-path screenshots or exported heap snapshots.
-6. Repeat rapid start/abandon during loading and asset retry under the development Strict Mode build as a lifecycle stress test. Label this separately from optimized-build performance.
-
-Session counters are available only while `window.__pirateTest` exists; menu cleanup removes that API. Use DOM inspection and heap snapshots for post-exit evidence rather than assuming deleted instrumentation proves all resources were freed.
-
-## Delivery artifacts
-
-Store the measured summary here and attach raw samples/traces/heap evidence through the final submission or CI artifact. Record artifact filenames and the corresponding source commit. Do not commit large heap snapshots, unrelated machine information, or private browser-profile data.
-
-| Required evidence                         | Status |
-| ----------------------------------------- | ------ |
-| Three-minute optimized-build combat       | TODO   |
-| Hardware/browser/resolution/configuration | TODO   |
-| FPS, P95 frame interval, entity counts    | TODO   |
-| Five-cycle memory comparison              | TODO   |
-| Investigation of any retained resources   | TODO   |
-
-Until these rows have real artifacts, performance remains unverified.
-
+The script rejects a Vite development document, records source revision/build-document hash/browser/GPU/configuration, and records failed or partial runs honestly. It does not declare an early death to be a completed three-minute measurement. Large raw heap files are excluded from Git; parsed counts and raw frame samples are versioned.

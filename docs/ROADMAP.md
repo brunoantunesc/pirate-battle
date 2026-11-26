@@ -29,3 +29,9 @@ Follow-up: baseline comparison run was interrupted after a desktop combat timeou
 
 Full Playwright suite: 49 passed, 1 intentional desktop multitouch duplicate skipped, in 2.5 minutes. Six existing visual baselines matched without updates. All twelve official groups now have browser evidence mapped in COVERAGE-AUDIT.md. Unit suite:42 passed. Typecheck, lint and production build passed; bundle-size warning remains. Fixed storage quota completion and dialog keyboard/focus issues. Visibility is an emulated browser signal; actual OS visibility smoke, heap/GPU profiling, 180-second FPS measurement and public deployment remain outstanding.
 
+
+## Public delivery milestone — 2026-11-25
+
+Published https://pirate-battle-ivory.vercel.app from gameplay d357514. All 20 public desktop/mobile smoke tests passed. Real optimized 180-second profiles measured 59.97 FPS / 16.70 ms P95 on RTX 3060, and 15.37 FPS on SwiftShader. Five lifecycle cycles showed stable native graphics counts; heap retention is not fully classified. Reports are versioned under docs/evidence. npm ci completed with zero vulnerabilities.
+
+Remaining evidence limits: full heap retaining paths/longer plateau, separate clean checkout, physical mobile hardware, actual OS visibility changes and comprehensive accessibility audit. Earlier milestones above are historical records.

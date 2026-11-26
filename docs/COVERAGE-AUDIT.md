@@ -30,8 +30,8 @@ Visual regression covers menu, deterministic arena and actual results, in both v
 
 - The visibility test emulates the browser's `document.hidden` signal and dispatches `visibilitychange`; it exercises the real production listener. Headless Chromium does not hide tabs when another headless tab is brought forward. An OS-level minimize/tab-switch smoke test remains manual.
 - Multitouch runs in the mobile Chromium project through actual CDP touch input. Its desktop duplicate is intentionally skipped.
-- Five-cycle checks prove bounded instrumented canvas/input counts and absence of visible stale canvases, not absence of every heap/GPU leak. Heap-retainer profiling remains required.
-- Three-minute production FPS/P95 profiling, public deployment smoke tests, physical mobile-device testing, and a comprehensive contrast/screen-reader audit remain separate delivery work.
+- Five-cycle checks prove bounded instrumented canvas/input counts and absence of visible stale canvases, not absence of every heap/GPU leak. Five measured production cycles are recorded in PERFORMANCE.md; full heap-retainer classification remains open.
+- Production FPS/P95 profiling and 20 public smoke tests are complete. Physical mobile hardware and a comprehensive contrast/screen-reader audit remain unverified.
 - Tests cannot prove every collision arrangement or all browser versions. Swept geometry and frame-rate equivalence have additional unit coverage.
 
 ## Reproduction
@@ -40,5 +40,4 @@ Run `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`, and `npm r
 
 ## Final execution evidence
 
-2026-11-25: full Playwright run completed with 49 passed and one intentional desktop multitouch skip (2.5 minutes). Existing visual baselines matched without updating. Unit tests:42 passed; typecheck, lint and production build passed. HTML report:playwright-report/index.html. No performance or deployment completion is claimed.
-
+2026-11-25: full Playwright run completed with 49 passed and one intentional desktop multitouch skip (2.5 minutes). Existing visual baselines matched without updating. Unit tests:42 passed; typecheck, lint and production build passed. HTML report:playwright-report/index.html. Subsequent delivery evidence includes real 180-second profiles and 20 passing public smoke tests under docs/evidence.

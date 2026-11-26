@@ -5,4 +5,7 @@ test-results/
 playwright-report/
 *.log
 *.tsbuildinfo
+.vercel/
+docs/evidence/*.heapsnapshot
+docs/evidence/*.trace.json
 .env.local

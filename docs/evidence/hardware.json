@@ -1,0 +1,18 @@
+{
+  "cpu": {
+    "Name": "AMD Ryzen 5 5600 6-Core Processor              ",
+    "NumberOfCores": 6,
+    "NumberOfLogicalProcessors": 12
+  },
+  "memory": {
+    "TotalPhysicalMemory": 34244231168
+  },
+  "gpu": {
+    "Name": "NVIDIA GeForce RTX 3060",
+    "DriverVersion": "32.0.16.1088"
+  },
+  "os": {
+    "Caption": "Microsoft Windows 11 Home",
+    "Version": "10.0.26300"
+  }
+}

@@ -1,0 +1,6 @@
+upstream-reference
+node_modules
+test-results
+playwright-report
+docs/evidence
+.git
