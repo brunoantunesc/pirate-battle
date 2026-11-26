@@ -1,45 +1,38 @@
 # Delivery roadmap
 
-Estimate: two working days. Prioritize gameplay, renderer lifecycle and readable combat, followed by data consistency and test evidence.
+Updated 2026-11-26. The original estimate was two working days. The currently published game remains available at https://pirate-battle-ivory.vercel.app; runtime revision is `4771d73`. Changes are delivered in independently reviewable commits, and runtime updates are published only after applicable checks pass.
 
-| Phase | Dependencies | Status | Exit evidence |
-|---|---|---|---|
-| 0 Discovery and foundation | Public upstream | In progress | Original statement copied, assets inspected, tools installed; first build pending |
-| 1 Core gameplay | Typed contracts | In progress | Pure seeded simulation and unit tests being implemented |
-| 2 Rendering and experience | Simulation contract | In progress | Pixi renderer and React screens being integrated |
-| 3 Remote data | Match contract | In progress | MSW handlers, outbox and query hooks being implemented |
-| 4 Quality assurance | Integrated build | Pending | Desktop/mobile E2E, visual baselines, HTML report |
-| 5 Delivery | Passing checks | Pending | Optimized profiling, memory investigation, authorized public deployment |
+## Current status
 
-Parallel ownership: simulation agent owns config/simulation/unit tests; rendering agent owns renderer/input/canvas/audio; data agent owns api/mocks/records/network panel; primary owns project configuration, UI integration, E2E, documentation and git.
+| Phase                      | Status                               | Evidence / remaining scope                                                                                                        |
+| -------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| 0 Discovery and foundation | Verified                             | Original specification and supplied assets preserved; strict TypeScript and build tooling pass                                    |
+| 1 Core gameplay            | Implemented; spawn follow-up open    | Movement, combat, collisions, AI and lifecycle tests pass; G14 tracks the 36-enemy cap and skipped spawn intervals                |
+| 2 Rendering and experience | Verified for recorded scope          | Pixi rendering, six visual baselines, desktop/mobile layout, multitouch and required accessibility checks pass                    |
+| 3 Remote data              | Verified                             | Axios/MSW/TanStack Query, pagination, failure states, persistent outbox and timeout idempotency tests pass                        |
+| 4 Quality assurance        | Verified for recorded scope          | 42 unit tests; 53 optimized-build browser tests passed, one intentional desktop-only duplicate skipped                            |
+| 5 Delivery                 | Published; final handoff checks open | 24 public checks passed; profiling and reports versioned; repository publication and clean-checkout validation tracked separately |
 
-Risks: graphics support in automated browser; dependency download permissions; real three-minute profiling requires a reference environment; public deployment requires user authorization and destination. No remote repository changes are authorized.
+## Ordered final handoff
 
-Asset discovery: official source commit `315891441be81ca0bff75cf3c2b0cd2f27f119cd`. UI atlas provides frames, anchors, nine-slice borders and logical content rectangles. Ship atlas is XML. Tiles are 64 px without spacing. Individual default/retina PNGs avoid atlas conversion. WAV audio and reference images are present. Original assets are copied without alteration; upstream checkout is ignored.
+1. Reconcile documentation and publish the solution repository for evaluator access. Documentation describes completed evidence and actual limits without obsolete pending claims.
+2. Correct and verify continuous safe spawning without disturbing the published working version.
+3. Perform installation, build and browser verification from a separate clean checkout.
 
-## Verified playable milestone — 2026-11-24
+The original Jungle Gaming repository must remain unchanged. Publication is authorized only for the project owner's solution repository/account.
 
-Foundation and playable core are integrated. Production build and type checking passed. The expanded browser suite passed 14 cases across desktop and mobile while generating six visual baselines. Baseline comparison is being confirmed separately. Core has 23 unit cases and data has 19. Full coverage of all twelve official groups remains unfinished. Next: complete gameplay/network E2E coverage, profile a production three-minute match and five lifecycle cycles, then authorize and validate public deployment. The current bundle emits a size warning; no performance claim is made.
+## Current evidence
 
+Typecheck, lint, production build and 42 unit tests passed on 2026-11-26. The optimized browser suite passed 53 cases, with one desktop multitouch duplicate intentionally skipped because actual multitouch is exercised in the mobile project. All 24 public desktop/mobile checks passed. Reports are linked in README and in `docs/evidence`.
 
-Follow-up: baseline comparison run was interrupted after a desktop combat timeout. The preceding snapshot-generation run passed all 14 cases. Browser repeatability remains IN_PROGRESS; do not interpret initial baseline generation as regression approval.
+A real 180-second optimized match measured 59.97 FPS / 16.70 ms P95 on RTX 3060 and 15.37 FPS with SwiftShader. A 15-cycle heap investigation identified retained MSW diagnostic response streams; the corrected five-cycle run holds native MessagePorts at 2 instead of 524. Retaining paths classify shared Pixi resources, disposed React props, V8 compilation and DevTools network history. See PERFORMANCE.md and ACCESSIBILITY.md for measurement scope.
 
+Physical devices, spoken screen-reader output, OS-level visibility changes and GPU-memory/RSS measurements are additional evidence limits. The separate clean checkout remains a required final check, not a completed measurement.
 
-## Coverage milestone — 2026-11-25
+## Historical milestones
 
-Full Playwright suite: 49 passed, 1 intentional desktop multitouch duplicate skipped, in 2.5 minutes. Six existing visual baselines matched without updates. All twelve official groups now have browser evidence mapped in COVERAGE-AUDIT.md. Unit suite:42 passed. Typecheck, lint and production build passed; bundle-size warning remains. Fixed storage quota completion and dialog keyboard/focus issues. Visibility is an emulated browser signal; actual OS visibility smoke, heap/GPU profiling, 180-second FPS measurement and public deployment remain outstanding.
+- **2026-11-24:** playable foundation and first 14 browser cases; initial baseline generation was not yet complete regression evidence.
+- **2026-11-25:** expanded local suite reached 49 passed / one intentional skip; first public deployment passed 20 checks; optimized profiling completed.
+- **2026-11-26:** required accessibility and memory follow-up completed; current suite reached 53 passed / one intentional skip and public validation reached 24 passed. These results supersede the earlier partial milestones.
 
-
-## Public delivery milestone — 2026-11-25
-
-Published https://pirate-battle-ivory.vercel.app from gameplay d357514. All 20 public desktop/mobile smoke tests passed. Real optimized 180-second profiles measured 59.97 FPS / 16.70 ms P95 on RTX 3060, and 15.37 FPS on SwiftShader. Five lifecycle cycles showed stable native graphics counts; heap retention is not fully classified. Reports are versioned under docs/evidence. npm ci completed with zero vulnerabilities.
-
-Remaining evidence limits: full heap retaining paths/longer plateau, separate clean checkout, physical mobile hardware, actual OS visibility changes and comprehensive accessibility audit. Earlier milestones above are historical records.
-
-## Accessibility and memory follow-up — 2026-11-26
-
-Completed the challenge-specific keyboard, focus, validation, HUD semantics and text contrast checks. Corrected menu/footer contrast and associated errors. A 15-cycle heap audit identified unused MSW diagnostic response streams; cancellation preserves the original application response while preventing native MessagePort accumulation (2 after five corrected cycles, versus 524 before). Retaining paths classify shared Pixi resources, disposed React props, V8 compilation and DevTools network logs. See ACCESSIBILITY.md and PERFORMANCE.md.
-
-Earlier notes about incomplete contrast/retaining-path analysis are superseded by these focused investigations. Physical devices, spoken screen-reader output, GPU-memory/RSS measurements and a separate clean checkout remain outside the evidence scope.
-
-Final validation: 42 unit tests and 53 optimized-build browser tests passed (one intentional desktop multitouch duplicate skipped); typecheck, lint and build passed. Runtime 4771d73 is published at https://pirate-battle-ivory.vercel.app and all 24 public desktop/mobile checks passed. The accessibility and memory follow-up is complete for the required scope.
+The supplied assets originate from upstream commit `315891441be81ca0bff75cf3c2b0cd2f27f119cd`. Original assets are preserved; the reference checkout is ignored.

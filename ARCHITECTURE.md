@@ -40,13 +40,13 @@ The arena uses 1200 × 720 logical coordinates and CSS aspect-ratio scaling. Pix
 
 The renderer owns display objects and tile subtextures; Pixi Assets owns shared source textures across matches. Removed entities destroy their display objects. Session cleanup stops audio, removes input listeners, destroys the application/ticker/stage and canvas, releases subtextures without destroying shared sources, and removes test instrumentation. Asynchronous initialization checks disposal before attaching resources. Strict Mode effect replay cleans view resources without disposing a simulation that the replacement effect still owns.
 
-Resource ownership is implemented, but repeated-cycle heap and GPU retention are not yet measured. Keeping a bounded shared texture cache is intentional and should not be mistaken for a session leak.
+Resource ownership has been investigated with a 15-cycle heap audit and a corrected five-cycle run; retaining paths and measured counts are in `docs/PERFORMANCE.md`. GPU allocation and process RSS are outside that measurement scope. Keeping a bounded shared texture cache is intentional and is distinguished from a session leak.
 
 ## Input and accessibility
 
 Keyboard and touch write the same six normalized actions. Keyboard aliases are tracked separately; blur and hidden-document events pause and clear holds. Pointer controls use capture and clear on release, cancellation, and lost capture. Gameplay keys are active only while a running game owns input listeners; text fields and focused button Space activation are protected.
 
-React uses native buttons, labelled number fields, native modal dialogs with focus restoration, table headers, status/error messages, and a semantic HUD including a health meter. Score and time are not live-announced each frame. Contrast, clipping, actual multitouch, and all focus paths still require browser validation; implementation alone is not proof of accessibility conformance.
+React uses native buttons, labelled number fields, native modal dialogs with focus restoration, table headers, status/error messages, and a semantic HUD including a health meter. Score and time are not live-announced each frame. Desktop/mobile browser tests verify text contrast, tested layout sizes, real CDP multitouch, dialog focus and associated errors. `docs/ACCESSIBILITY.md` records the exact scope; this is not a claim of universal accessibility conformance or tested screen-reader speech.
 
 ## REST and query ownership
 
@@ -70,24 +70,23 @@ Submission persists the outbox before HTTP, deduplicates concurrent requests in 
 
 Recovery is explicit through result/ledger buttons after refresh. Pending records do not block starting another match. Storage change events update pending indicators. Network reset aborts registrations/cancels queries, increments a reset generation to reject stale writes, clears demo storage, and removes query data. Scenario changes preserve outbox records.
 
-LocalStorage is the mock service's persistence mechanism, so there is no true multi-device backend or transactional cross-tab database. Concurrent tabs and browser quota denial need separate validation; single-tab UUID idempotency is covered by tests. The mock service starts in production too; startup failure shows a reload control rather than silently bypassing interception.
+LocalStorage is the mock service's persistence mechanism, so there is no true multi-device backend or transactional cross-tab database. Single-tab UUID idempotency and quota-denial recovery are covered by tests; transactional cross-tab behavior is not claimed. The mock service starts in production too; startup failure shows a reload control rather than silently bypassing interception.
 
 ## Testing and evidence
 
 The current `npm test` run passes 42 tests: 23 simulation tests and 19 Axios/MSW/data tests. Pure simulation fixtures position entities to test geometry and invariants; browser combat tests must instead use real controls. Unit coverage includes 30/60/120 FPS equivalence, immutable config, pause, swept collisions, weapons, scoring, AI, lifecycle/disposal, outbox recovery, idempotent timeout, configuration pagination, malformed persistence, endpoint failures, and seeded delays.
 
-Playwright is configured for desktop Chromium and Pixel 7 emulation with isolated browser contexts, HTML reporting, and failure traces. The initial foundation suite covers options and a movement/fire/pause/abandon flow and passed all four desktop/mobile cases. `tests/e2e/lifecycle.spec.ts` adds asset retry, completion/refresh/restart, pagination/empty history, and pointer/blur handling. `tests/visual/screens.spec.ts` captures menu, deterministic arena and an actual simulated result. Those newer tests and generated candidate baselines are under validation. Completion of all twelve official groups, reviewed visual baselines, and production profiling remain separately tracked in `docs/REQUIREMENTS.md`.
+Playwright runs desktop Chromium and Pixel 7 emulation with isolated contexts, HTML reports and failure traces. The latest optimized-build suite passed 53 cases with one intentional desktop multitouch duplicate skipped; the mobile multitouch case passed. All twelve official groups are mapped in `docs/COVERAGE-AUDIT.md`. Six versioned menu/arena/results baselines passed comparison. The public deployment separately passed 24 checks, including accessibility and network recovery. Versioned reports are linked in README.
 
 `?test=1` opts into `window.__pirateTest`, starts with seed 42 and a manual clock, and permits snapshots, real fixed-tick advancement, switching to the normal clock, and metrics. It cannot directly assign score, HP, or positions. This opt-in interface exists in the browser build to support reproducible review; ordinary URLs do not expose it. Deterministic tests are not performance evidence: real-time profiling must turn the manual clock off and use an optimized build.
 
-## Remaining delivery limitations
+## Remaining limitations and delivery checks
 
-- Public deployment and URL smoke tests are pending.
-- The full official E2E matrix and reviewed visual baselines are pending.
-- Three-minute optimized-build performance and five-cycle memory evidence are pending.
-- Mobile layout, keyboard focus, audio behavior, and repeated Strict Mode navigation require complete browser validation.
-- CSS currently uses a scoped naming convention in one stylesheet rather than CSS Modules; splitting styles can follow stable UI validation without changing gameplay.
-- Supplied asset licensing is not independently documented by the upstream repository; no extra asset license is asserted.
+- The current 36-enemy spawn cap and exhausted random spawn attempts can skip an interval; G14 tracks the required correction.
+- A separate clean-checkout installation/build/browser verification remains pending (E07).
+- Physical mobile hardware, actual screen-reader speech, OS-level tab hiding, GPU allocation and process RSS are not covered by the recorded automated evidence. Browser visibility signals, required accessibility semantics and reference-environment performance are covered.
+- CSS uses one stylesheet with scoped class names rather than CSS Modules; CSS Modules are a project preference, not an official challenge requirement.
+- The upstream repository does not independently document an asset license; no additional redistribution license is asserted. External font licenses and sources are credited in README.
 
 ## Diagnostic response stream ownership
 

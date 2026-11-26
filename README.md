@@ -4,6 +4,8 @@ A single-player naval shooter for the Jungle Gaming React & PixiJS technical cha
 
 **Public demo: [Play Pirate Battle](https://pirate-battle-ivory.vercel.app).** Published on Vercel; 24 desktop/mobile smoke tests passed on 2026-11-26. See [deployment evidence](docs/DEPLOYMENT.md).
 
+**Source repository:** [brunoantunesc/pirate-battle](https://github.com/brunoantunesc/pirate-battle).
+
 ## Run locally
 
 Use Node.js 22.14 or newer compatible Node 22, and npm. Install the committed dependency versions:
@@ -29,7 +31,7 @@ Open the local URL printed by Vite. MSW starts before the application and interc
 
 Movement and attacks can be combined. Each broadside fires three parallel shots and has its own cooldown. Losing focus or hiding the tab pauses combat; returning does not resume it automatically. Refresh or Abandon Match discards active combat without recording it.
 
-Desktop and mobile layouts support portrait and landscape; landscape is recommended for the widest arena. Logical arena size remains 1200 × 720 in either orientation. Browser validation of the full layout matrix is still pending; see the checklist.
+Desktop and mobile layouts support portrait and landscape; landscape is recommended for the widest arena. Logical arena size remains 1200 × 720 in either orientation. Browser checks cover desktop, mobile portrait and landscape resize cases; physical-device testing is not claimed.
 
 ## Configuration
 
@@ -83,7 +85,7 @@ To reproduce recovery, select **Unavailable during match completion**, complete 
 | `npm run test:visual` | Run tests matching `visual`; compare the six versioned baseline images |
 | `npm run test:report` | Open the generated Playwright HTML report                              |
 
-Install the test browser with `npx playwright install chromium` before the first E2E run. Playwright starts Vite automatically unless the local server is already running. Every test receives an isolated browser context. Failed runs retain traces and screenshots under `test-results`; HTML reports are generated under `playwright-report`. These generated directories are ignored by Git: attach the relevant report directories to the final submission or CI artifact rather than claiming a checked-in report exists.
+Install the test browser with `npx playwright install chromium` before the first E2E run. Playwright starts Vite automatically unless the local server is already running. Every test receives an isolated browser context. Failed runs retain traces and screenshots under `test-results`; HTML reports are generated under `playwright-report`. These working directories are ignored by Git. The validated delivery reports are versioned under `docs/evidence/browser-report` and `docs/evidence/public-browser-report`, with profiling data and a diagnostic failure trace in `docs/evidence`.
 
 For deterministic combat tests use `/?test=1`. The opt-in `window.__pirateTest` exposes cloned observations and a clock that advances real fixed simulation ticks; use actual keyboard or pointer controls for combat actions. Normal play omits this query parameter. See [architecture](ARCHITECTURE.md) for test limitations.
 
@@ -106,4 +108,4 @@ Final validation on 2026-11-26: 42 unit tests passed; the complete optimized-bui
 
 ## Asset credits
 
-Game art, UI sprites, reference images, tiles, and WAV sounds are supplied by [Jungle Gaming's challenge repository](https://github.com/junglegaming/game-developer-challenge), source commit `315891441be81ca0bff75cf3c2b0cd2f27f119cd`. They are preserved in `public/assets`. No supplementary downloaded artwork or fonts are used. The supplied repository does not include an asset license file; no additional redistribution license is inferred here. Dependencies retain their respective package licenses.
+Game art, UI sprites, reference images, tiles, and WAV sounds are supplied by [Jungle Gaming's challenge repository](https://github.com/junglegaming/game-developer-challenge), source commit `315891441be81ca0bff75cf3c2b0cd2f27f119cd`. They are preserved in `public/assets`. No supplementary artwork is used. Typography uses Barlow Condensed and DM Sans loaded through Google Fonts, with system font fallbacks if the font service is unavailable. Both fonts use SIL Open Font License 1.1: [Barlow Condensed license and authors](https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/OFL.txt), [DM Sans license and authors](https://raw.githubusercontent.com/google/fonts/main/ofl/dmsans/OFL.txt). The supplied repository does not include an asset license file; no additional redistribution license is inferred here. Dependencies retain their respective package licenses.
