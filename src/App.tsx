@@ -36,12 +36,20 @@ function Dialog({
     <dialog
       ref={ref}
       onKeyDown={(event) => {
-        if (event.key !== 'Tab') return;
-        const controls = ref.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]');
+        if (event.key !== "Tab") return;
+        const controls = ref.current?.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]',
+        );
         if (!controls?.length) return;
-        const first = controls[0], last = controls[controls.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        const first = controls[0],
+          last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }}
       onCancel={(event) => {
         event.preventDefault();
@@ -67,6 +75,10 @@ function Options({
   const [duration, setDuration] = useState(String(config.duration));
   const [spawn, setSpawn] = useState(String(config.spawnInterval));
   const [error, setError] = useState("");
+  const durationInvalid =
+    Boolean(error) && !validOptions(Number(duration), config.spawnInterval);
+  const spawnInvalid =
+    Boolean(error) && !validOptions(config.duration, Number(spawn));
   return (
     <Dialog title="Captain’s orders" onClose={onClose}>
       <form
@@ -102,6 +114,8 @@ function Options({
             min="60"
             max="180"
             required
+            aria-invalid={durationInvalid}
+            aria-describedby={error ? "options-error" : undefined}
             value={duration}
             onChange={(event) => setDuration(event.target.value)}
           />
@@ -114,11 +128,17 @@ function Options({
             max="15"
             step="0.5"
             required
+            aria-invalid={spawnInvalid}
+            aria-describedby={error ? "options-error" : undefined}
             value={spawn}
             onChange={(event) => setSpawn(event.target.value)}
           />
         </label>
-        {error && <p role="alert">{error}</p>}
+        {error && (
+          <p id="options-error" role="alert">
+            {error}
+          </p>
+        )}
         <div className="actions">
           <button className="primary" type="submit">
             Save Options
@@ -239,6 +259,13 @@ function Combat({
   ] as const;
   return (
     <section className="combat" aria-label="Naval battle">
+      <p className="sr-only" role="status" aria-label="Match status">
+        {!ready
+          ? "Loading battle"
+          : hud.status === "paused"
+            ? "Battle paused"
+            : "Battle running"}
+      </p>
       <header className="hud">
         <div>
           <span className="eyebrow">Black flag expedition</span>
@@ -256,11 +283,11 @@ function Combat({
             value={hud.hp}
           />
         </div>
-        <div className="hud-stat">
+        <div className="hud-stat" role="group" aria-label="Score">
           <span>Score</span>
           <strong>{hud.score}</strong>
         </div>
-        <div className="hud-stat">
+        <div className="hud-stat" role="group" aria-label="Time left">
           <span>Time left</span>
           <strong>
             {Math.ceil(Math.max(0, simulation.config.duration - hud.time))}s
@@ -369,7 +396,11 @@ export function App() {
     };
     // Result navigation must succeed even when browser storage is full or blocked.
     // The mutation queues before HTTP and exposes failures without losing this session's result.
-    try { enqueueMatch(next); } catch { /* Results reports the absence of a durable record. */ }
+    try {
+      enqueueMatch(next);
+    } catch {
+      /* Results reports the absence of a durable record. */
+    }
     setResult(next);
     registration.mutate(next);
     setScreen("result");

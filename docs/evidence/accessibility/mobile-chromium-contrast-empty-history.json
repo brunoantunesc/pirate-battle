@@ -1,0 +1,67 @@
+[
+  {
+    "text": "Captain’s ledger",
+    "ratio": 10.29,
+    "minimum": 3
+  },
+  {
+    "text": "Ranking",
+    "ratio": 9.53,
+    "minimum": 4.5
+  },
+  {
+    "text": "Match History",
+    "ratio": 8.11,
+    "minimum": 4.5
+  },
+  {
+    "text": "Captain’s log",
+    "ratio": 10.6,
+    "minimum": 3
+  },
+  {
+    "text": "Your completed voyages. Abandoned matches are never recorded.",
+    "ratio": 7.09,
+    "minimum": 4.5
+  },
+  {
+    "text": "Your completed voyages. Abandoned matches are never recorded.",
+    "ratio": 7.1,
+    "minimum": 4.5
+  },
+  {
+    "text": "No completed voyages yet. Set sail to begin your log.",
+    "ratio": 11.34,
+    "minimum": 4.5
+  },
+  {
+    "text": "No completed voyages yet. Set sail to begin your log.",
+    "ratio": 11.63,
+    "minimum": 4.5
+  },
+  {
+    "text": "Page",
+    "ratio": 12.4,
+    "minimum": 4.5
+  },
+  {
+    "text": "1",
+    "ratio": 12.71,
+    "minimum": 4.5
+  },
+  {
+    "text": "of",
+    "ratio": 12.58,
+    "minimum": 4.5
+  },
+  {
+    "text": "1",
+    "ratio": 12.71,
+    "minimum": 4.5
+  },
+  {
+    "text": "Close",
+    "ratio": 9.51,
+    "minimum": 4.5
+  }
+]

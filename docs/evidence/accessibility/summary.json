@@ -1,0 +1,110 @@
+[
+  {
+    "project": "chromium",
+    "state": "contrast-menu",
+    "minimumRatio": 4.59,
+    "samples": 42
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-network-settings",
+    "minimumRatio": 5.54,
+    "samples": 51
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-options",
+    "minimumRatio": 6.18,
+    "samples": 10
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-validation-error",
+    "minimumRatio": 6.81,
+    "samples": 11
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-ranking",
+    "minimumRatio": 6.81,
+    "samples": 40
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-empty-history",
+    "minimumRatio": 6.91,
+    "samples": 11
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-battle",
+    "minimumRatio": 7.79,
+    "samples": 25
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-pause",
+    "minimumRatio": 6.37,
+    "samples": 5
+  },
+  {
+    "project": "chromium",
+    "state": "contrast-results",
+    "minimumRatio": 5.88,
+    "samples": 15
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-menu",
+    "minimumRatio": 5.45,
+    "samples": 36
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-network-settings",
+    "minimumRatio": 5.11,
+    "samples": 47
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-options",
+    "minimumRatio": 6.18,
+    "samples": 10
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-validation-error",
+    "minimumRatio": 6.18,
+    "samples": 12
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-ranking",
+    "minimumRatio": 6.89,
+    "samples": 41
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-empty-history",
+    "minimumRatio": 7.09,
+    "samples": 13
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-battle",
+    "minimumRatio": 6.21,
+    "samples": 23
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-pause",
+    "minimumRatio": 6.32,
+    "samples": 5
+  },
+  {
+    "project": "mobile-chromium",
+    "state": "contrast-results",
+    "minimumRatio": 5.35,
+    "samples": 15
+  }
+]

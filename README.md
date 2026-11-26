@@ -93,12 +93,14 @@ The repository includes `vercel.json`: build with `npm run build`, publish `dist
 
 ## Evidence and remaining work
 
-Validation on 2026-11-25: 42 unit tests passed; the complete browser suite passed 49 cases with one intentional desktop multitouch skip. Typecheck, lint and production build passed. See docs/COVERAGE-AUDIT.md for all twelve official groups and explicit evidence limits. Production profiling and public deployment are complete. A real 180-second match measured 59.97 FPS / 16.70 ms P95 on RTX 3060, and 15.37 FPS with software rendering. Five lifecycle cycles showed stable native graphics counts; full heap-retainer classification remains open. See the performance report for scope and limitations.
+Final validation on 2026-11-26: 42 unit tests passed; the complete optimized-build browser suite passed 53 cases with one intentional desktop multitouch skip. Typecheck, lint and production build passed. See docs/COVERAGE-AUDIT.md for all twelve official groups and explicit evidence limits. Production profiling and public deployment are complete. A real 180-second match measured 59.97 FPS / 16.70 ms P95 on RTX 3060, and 15.37 FPS with software rendering. A subsequent retaining-path audit found and corrected unused MSW diagnostic streams: native MessagePorts now remain at 2 across five real cycles. Compilation and debugger-history growth are classified separately in the report. See the performance report for scope and limitations.
 
 - [Official challenge, preserved verbatim](docs/CHALLENGE.md)
 - [Requirement checklist and evidence](docs/REQUIREMENTS.md)
 - [Architecture, balance, and trade-offs](ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Required accessibility verification](docs/ACCESSIBILITY.md)
+- [Final optimized-build browser report](docs/evidence/browser-report/index.html)
 - [Public smoke HTML report](docs/evidence/public-smoke.html)
 - [Performance measurements and limitations](docs/PERFORMANCE.md)
 

@@ -34,7 +34,7 @@ Each cycle played 20 active seconds using the real ticker and inputs, then pause
 
 Every active session had exactly one instrumented canvas and one input binding. Every exit removed the mounted canvas and test API. Native heap counts remained unchanged: 2 HTMLCanvasElement objects, 2 WebGLRenderingContext objects, 1 WebGL2RenderingContext object, including shared renderer/asset resources outside the mounted canvas. No accumulated native canvas/context count was observed.
 
-Heap increased 635812 bytes (about 621 KiB) from the GPU warm baseline and was not monotonically increasing. DOM/listener counts oscillated within two observed levels rather than growing each cycle. The software run increased 609316 bytes monotonically, while DOM/listener counts and native graphics counts stayed constant. These observations do not prove a leak-free heap: runtime caches, framework work and instrumentation may contribute; minification obscures application constructor names, and retaining paths were not fully classified. GPU allocation and process RSS were not measured. A longer plateau/retainer investigation remains an explicit limitation, not a hidden pass.
+Heap increased 635812 bytes (about 621 KiB) from the GPU warm baseline and was not monotonically increasing. DOM/listener counts oscillated within two observed levels rather than growing each cycle. The software run increased 609316 bytes monotonically, while DOM/listener counts and native graphics counts stayed constant. These observations do not prove a leak-free heap: runtime caches, framework work and instrumentation may contribute; minification obscures application constructor names, and retaining paths were not fully classified. GPU allocation and process RSS were not measured. This was the initial evidence limit. The extended investigation below identifies and corrects a concrete retention issue; remaining measurement limits are stated there.
 
 ## Reproduce
 
@@ -45,3 +45,38 @@ Heap increased 635812 bytes (about 621 KiB) from the GPU warm baseline and was n
 5. Set PROFILE_SAVE_HEAPS=1 to save full snapshots under ignored test-results/profile for deeper retaining-path analysis. PROFILE_HEADFUL=1 allows an interactive-browser comparison. PROFILE_URL can target an optimized preview elsewhere.
 
 The script rejects a Vite development document, records source revision/build-document hash/browser/GPU/configuration, and records failed or partial runs honestly. It does not declare an early death to be a completed three-minute measurement. Large raw heap files are excluded from Git; parsed counts and raw frame samples are versioned.
+
+## Retaining-path investigation and correction — 2026-11-25
+
+The initial investigation above was extended to **15 real start/play/exit cycles**, each with 20 active seconds, on the same hardware, browser, viewport, seed and spawn configuration. The optimized build was used throughout. A separate five-cycle comparison collected the service-worker heap as well as the page heap. Evidence: [15-cycle audit](evidence/memory-audit.json), [worker-GC comparison](evidence/memory-worker-check.json), and [five cycles after correction](evidence/memory-fixed.json).
+
+The analyzer identifies resources by their property signatures instead of minified constructor names. An active-match snapshot first confirms that these signatures detect the real simulation, renderer, audio owner and Pixi application. Subsequent snapshots record shortest strong retaining paths, excluding weak edges. These paths establish reachability; they are not a dominator tree or retained-size calculation.
+
+### Findings and fix
+
+| Resource                                                             | Before correction                                                                                    | After correction                       |
+| -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Native MessagePorts                                                  | Warm baseline 109; cycles 5/10/15: 524/939/1354                                                      | Warm baseline 2; after five cycles 2   |
+| Session Pixi applications, battle renderers, audio owners after exit | 0 each                                                                                               | 0 each                                 |
+| Simulation after exit                                                | One disposed instance through React's previous props; a different instance at subsequent checkpoints | One disposed instance; no accumulation |
+| Pixi tickers after exit                                              | One shared `_system` ticker, reached through the module/static class                                 | Same shared ticker                     |
+| Mounted canvas                                                       | Removed after every exit                                                                             | Removed after every exit               |
+| DOM nodes / listeners after exit                                     | 239 / 199                                                                                            | 239 / 199 throughout                   |
+
+The growing MessagePorts were retained with transferred response streams. MSW 2.15.0 sends a separate response-body stream to lifecycle observers, including for bypassed audio/asset requests. This application did not consume those diagnostic copies. Collecting the service worker did not resolve the growth: 524 ports remained after five cycles and worker GC.
+
+`src/mocks/browser.ts` now cancels the unused diagnostic body on `response:bypass` and `response:mocked`. It does not cancel the application's original response. This uses the installed MSW lifecycle API, without modifying its generated service worker. After correction, five real cycles and additional worker GC kept native MessagePorts at **2**. The completed run recorded no page errors.
+
+### Remaining growth classified
+
+The corrected run's JavaScript heap rose from 7,847,708 to 8,737,752 bytes after page GC. Snapshot code objects rose from 4,486,908 to 5,291,040 shallow bytes, including V8 instruction streams and compilation metadata: compilation accounts for growth of a similar order, rather than retained game sessions. These counters measure different things and should not be subtracted as an exact allocation balance.
+
+DevTools network-record objects still rose from 103 to 519. Their paths lead through `DevToolsSession → InspectorNetworkAgent → NetworkResourcesData`, identifying the debugger's request history rather than an application-owned resource collection. Shared textures/native graphics counts remain bounded. The earlier 15-cycle run also shows compilation growth slowing: code shallow bytes increased 804,124 in cycles 1–5, 350,620 in 6–10, and 63,996 in 11–15.
+
+The required growth investigation is complete for this environment, and the identified stream retention is corrected. This does not claim a universally flat heap or absence of every leak. GPU allocations, process RSS, all browser versions, physical mobile devices and arbitrarily long sessions remain outside the measurement scope.
+
+### Reproduce the memory audit
+
+Build and start the optimized preview, then run `npm run profile:memory`. The default is one warm-up plus 15 measured cycles. Set `MEMORY_CYCLES=5` for the required five-cycle run; `MEMORY_REPORT` selects an evidence filename using lowercase letters/hyphens. `PROFILE_URL` selects the preview URL. Do not change the served build during a run.
+
+`scripts/memory-audit.mjs` writes a JSON summary with retaining paths and ignored raw `.heapsnapshot` files under `docs/evidence`. `scripts/heap-analysis.mjs` performs the analysis. The script checks active signature calibration, released session resources, bounded simulation counts and bounded diagnostic ports. Raw snapshots can be opened in Chromium's Memory panel; they are intentionally not committed because of their size and potentially sensitive runtime content. The versioned summaries contain the measured paths and counts needed to review this investigation.

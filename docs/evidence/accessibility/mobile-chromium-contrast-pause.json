@@ -1,0 +1,27 @@
+[
+  {
+    "text": "Anchors down",
+    "ratio": 10.29,
+    "minimum": 3
+  },
+  {
+    "text": "The battle is paused. Take a breath, captain.",
+    "ratio": 10.6,
+    "minimum": 4.5
+  },
+  {
+    "text": "Resume",
+    "ratio": 6.32,
+    "minimum": 4.5
+  },
+  {
+    "text": "Abandon Match",
+    "ratio": 9.39,
+    "minimum": 4.5
+  },
+  {
+    "text": "Abandoned matches do not enter the records.",
+    "ratio": 7.29,
+    "minimum": 4.5
+  }
+]

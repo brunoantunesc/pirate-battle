@@ -30,8 +30,8 @@ Visual regression covers menu, deterministic arena and actual results, in both v
 
 - The visibility test emulates the browser's `document.hidden` signal and dispatches `visibilitychange`; it exercises the real production listener. Headless Chromium does not hide tabs when another headless tab is brought forward. An OS-level minimize/tab-switch smoke test remains manual.
 - Multitouch runs in the mobile Chromium project through actual CDP touch input. Its desktop duplicate is intentionally skipped.
-- Five-cycle checks prove bounded instrumented canvas/input counts and absence of visible stale canvases, not absence of every heap/GPU leak. Five measured production cycles are recorded in PERFORMANCE.md; full heap-retainer classification remains open.
-- Production FPS/P95 profiling and 20 public smoke tests are complete. Physical mobile hardware and a comprehensive contrast/screen-reader audit remain unverified.
+- Five-cycle checks prove bounded instrumented canvas/input counts and absence of visible stale canvases, not absence of every heap/GPU leak. Five measured production cycles are recorded in PERFORMANCE.md; the extended retaining-path investigation and MSW stream correction are documented there.
+- Production FPS/P95 profiling and 20 public smoke tests are complete. Required keyboard, semantics and text contrast are covered in ACCESSIBILITY.md. Physical mobile hardware and actual screen-reader output remain outside the automated scope.
 - Tests cannot prove every collision arrangement or all browser versions. Swept geometry and frame-rate equivalence have additional unit coverage.
 
 ## Reproduction
@@ -41,3 +41,9 @@ Run `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`, and `npm r
 ## Final execution evidence
 
 2026-11-25: full Playwright run completed with 49 passed and one intentional desktop multitouch skip (2.5 minutes). Existing visual baselines matched without updating. Unit tests:42 passed; typecheck, lint and production build passed. HTML report:playwright-report/index.html. Subsequent delivery evidence includes real 180-second profiles and 20 passing public smoke tests under docs/evidence.
+
+## Accessibility and memory follow-up — 2026-11-26
+
+Final optimized-build suite: **53 passed, one intentional desktop multitouch skip**, 2.6 minutes. All 42 unit tests, typecheck, lint and build passed. The [HTML report](evidence/browser-report/index.html) includes measured contrast attachments. Memory findings and the fixed diagnostic response streams are recorded in PERFORMANCE.md.
+
+An earlier development run was interrupted by a source-formatting reload; its [trace](evidence/interrupted-dev-trace.zip) is preserved. Early optimized accessibility attempts exposed test startup/font races, corrected by waiting for the mounted interface and loaded fonts before input or measurement. The final suite ran against an unchanged optimized build without these failures.

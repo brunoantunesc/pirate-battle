@@ -35,3 +35,9 @@ Full Playwright suite: 49 passed, 1 intentional desktop multitouch duplicate ski
 Published https://pirate-battle-ivory.vercel.app from gameplay d357514. All 20 public desktop/mobile smoke tests passed. Real optimized 180-second profiles measured 59.97 FPS / 16.70 ms P95 on RTX 3060, and 15.37 FPS on SwiftShader. Five lifecycle cycles showed stable native graphics counts; heap retention is not fully classified. Reports are versioned under docs/evidence. npm ci completed with zero vulnerabilities.
 
 Remaining evidence limits: full heap retaining paths/longer plateau, separate clean checkout, physical mobile hardware, actual OS visibility changes and comprehensive accessibility audit. Earlier milestones above are historical records.
+
+## Accessibility and memory follow-up — 2026-11-26
+
+Completed the challenge-specific keyboard, focus, validation, HUD semantics and text contrast checks. Corrected menu/footer contrast and associated errors. A 15-cycle heap audit identified unused MSW diagnostic response streams; cancellation preserves the original application response while preventing native MessagePort accumulation (2 after five corrected cycles, versus 524 before). Retaining paths classify shared Pixi resources, disposed React props, V8 compilation and DevTools network logs. See ACCESSIBILITY.md and PERFORMANCE.md.
+
+Earlier notes about incomplete contrast/retaining-path analysis are superseded by these focused investigations. Physical devices, spoken screen-reader output, GPU-memory/RSS measurements and a separate clean checkout remain outside the evidence scope.

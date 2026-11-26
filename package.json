@@ -15,7 +15,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:visual": "playwright test visual",
     "test:report": "playwright show-report",
-    "profile": "node scripts/profile.mjs"
+    "profile": "node scripts/profile.mjs",
+    "profile:memory": "node scripts/memory-audit.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.0.0",

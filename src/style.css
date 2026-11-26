@@ -57,7 +57,8 @@ select {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-select:focus-visible {
+select:focus-visible,
+summary:focus-visible {
   outline: 3px solid #ffe5a3;
 }
 button {
@@ -93,7 +94,7 @@ button.primary {
   min-height: 100dvh;
   padding: 0 clamp(20px, 5vw, 90px);
   background:
-    linear-gradient(90deg, #062632f5 5%, #062632b8 58%, #06263266),
+    linear-gradient(90deg, #062632f5 5%, #062632db 58%, #062632cc),
     url("/assets/ui_scene_background.png") center/cover fixed;
 }
 .masthead {
@@ -297,7 +298,7 @@ kbd {
   gap: 15px;
   font-size: 0.65rem;
   letter-spacing: 0.12em;
-  color: #91aaa9;
+  color: var(--muted);
   padding: 24px 0;
 }
 .panel,

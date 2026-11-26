@@ -1,0 +1,57 @@
+[
+  {
+    "text": "Captain’s orders",
+    "ratio": 10.15,
+    "minimum": 3
+  },
+  {
+    "text": "Set the pace of your next expedition.",
+    "ratio": 10.43,
+    "minimum": 4.5
+  },
+  {
+    "text": "Game session time",
+    "ratio": 10.6,
+    "minimum": 4.5
+  },
+  {
+    "text": "60–180 seconds",
+    "ratio": 6.81,
+    "minimum": 4.5
+  },
+  {
+    "text": "Enemy spawn time",
+    "ratio": 11.17,
+    "minimum": 4.5
+  },
+  {
+    "text": "1–15 seconds",
+    "ratio": 7.1,
+    "minimum": 4.5
+  },
+  {
+    "text": "Session time must be 60–180 seconds. Spawn time must be 1–15 seconds.",
+    "ratio": 9.75,
+    "minimum": 4.5
+  },
+  {
+    "text": "Save Options",
+    "ratio": 8.91,
+    "minimum": 4.5
+  },
+  {
+    "text": "Cancel",
+    "ratio": 9.53,
+    "minimum": 4.5
+  },
+  {
+    "text": "INPUT: 1",
+    "ratio": 16.99,
+    "minimum": 4.5
+  },
+  {
+    "text": "INPUT: 3",
+    "ratio": 16.99,
+    "minimum": 4.5
+  }
+]

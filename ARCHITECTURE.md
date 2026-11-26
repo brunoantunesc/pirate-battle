@@ -88,3 +88,7 @@ Playwright is configured for desktop Chromium and Pixel 7 emulation with isolate
 - Mobile layout, keyboard focus, audio behavior, and repeated Strict Mode navigation require complete browser validation.
 - CSS currently uses a scoped naming convention in one stylesheet rather than CSS Modules; splitting styles can follow stable UI validation without changing gameplay.
 - Supplied asset licensing is not independently documented by the upstream repository; no extra asset license is asserted.
+
+## Diagnostic response stream ownership
+
+MSW 2.15.0 transfers cloned response streams to lifecycle observers, including bypassed sound/asset requests. The application does not inspect those diagnostic bodies. Browser startup registers response:bypass and response:mocked listeners that cancel the diagnostic copy, preserving the original response used by Axios, audio and images. A 15-cycle heap audit identified growing native MessagePorts; the corrected five-cycle run keeps them bounded at 2. See docs/PERFORMANCE.md for retaining paths, compilation/debugger overhead and measurement limits.

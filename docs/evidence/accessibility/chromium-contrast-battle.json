@@ -1,0 +1,127 @@
+[
+  {
+    "text": "Black flag expedition",
+    "ratio": 8.56,
+    "minimum": 4.5
+  },
+  {
+    "text": "Captain’s ship",
+    "ratio": 13.59,
+    "minimum": 4.5
+  },
+  {
+    "text": "Hull",
+    "ratio": 8.06,
+    "minimum": 4.5
+  },
+  {
+    "text": "100",
+    "ratio": 12.35,
+    "minimum": 3
+  },
+  {
+    "text": "/",
+    "ratio": 12.35,
+    "minimum": 3
+  },
+  {
+    "text": "100",
+    "ratio": 12.53,
+    "minimum": 3
+  },
+  {
+    "text": "Score",
+    "ratio": 8.35,
+    "minimum": 4.5
+  },
+  {
+    "text": "0",
+    "ratio": 12.81,
+    "minimum": 3
+  },
+  {
+    "text": "Time left",
+    "ratio": 8.56,
+    "minimum": 4.5
+  },
+  {
+    "text": "120",
+    "ratio": 13.14,
+    "minimum": 3
+  },
+  {
+    "text": "s",
+    "ratio": 13.3,
+    "minimum": 3
+  },
+  {
+    "text": "Pause",
+    "ratio": 9.39,
+    "minimum": 4.5
+  },
+  {
+    "text": "W / A / D to sail · Q / Space / E to fire · Esc to pause",
+    "ratio": 7.79,
+    "minimum": 4.5
+  },
+  {
+    "text": "Turn left",
+    "ratio": 9.25,
+    "minimum": 4.5
+  },
+  {
+    "text": "A",
+    "ratio": 10.37,
+    "minimum": 4.5
+  },
+  {
+    "text": "Forward",
+    "ratio": 9.25,
+    "minimum": 4.5
+  },
+  {
+    "text": "W",
+    "ratio": 10.22,
+    "minimum": 4.5
+  },
+  {
+    "text": "Turn right",
+    "ratio": 9.25,
+    "minimum": 4.5
+  },
+  {
+    "text": "D",
+    "ratio": 10.37,
+    "minimum": 4.5
+  },
+  {
+    "text": "Fire port",
+    "ratio": 9.25,
+    "minimum": 4.5
+  },
+  {
+    "text": "Q",
+    "ratio": 10.37,
+    "minimum": 4.5
+  },
+  {
+    "text": "Fire front",
+    "ratio": 9.39,
+    "minimum": 4.5
+  },
+  {
+    "text": "Space",
+    "ratio": 10.22,
+    "minimum": 4.5
+  },
+  {
+    "text": "Fire starboard",
+    "ratio": 9.39,
+    "minimum": 4.5
+  },
+  {
+    "text": "E",
+    "ratio": 10.37,
+    "minimum": 4.5
+  }
+]
