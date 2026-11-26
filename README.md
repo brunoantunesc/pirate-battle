@@ -2,7 +2,7 @@
 
 A single-player naval shooter for the Jungle Gaming React & PixiJS technical challenge. Sail between islands, fire independent cannon batteries, and survive rival Chasers and Shooters. Every enemy sunk by your weapons earns one point.
 
-**Public demo: [Play Pirate Battle](https://pirate-battle-ivory.vercel.app).** Published on Vercel; 20 desktop/mobile smoke tests passed on 2026-11-25. See [deployment evidence](docs/DEPLOYMENT.md).
+**Public demo: [Play Pirate Battle](https://pirate-battle-ivory.vercel.app).** Published on Vercel; 24 desktop/mobile smoke tests passed on 2026-11-26. See [deployment evidence](docs/DEPLOYMENT.md).
 
 ## Run locally
 
@@ -89,7 +89,7 @@ For deterministic combat tests use `/?test=1`. The opt-in `window.__pirateTest` 
 
 ## Deployment
 
-The repository includes `vercel.json`: build with `npm run build`, publish `dist`, and avoid caching `mockServiceWorker.js`. No environment variables are needed. Deployment must be authorized and performed against the solution's own repository/account, never the original challenge remote. After publishing, verify assets, MSW interception, a completed registration, both ledger tabs, refresh, and a mobile session at the returned public URL. Verified gameplay revision: `d357514`. Subsequent changes add evidence, profiling and test configuration.
+The repository includes `vercel.json`: build with `npm run build`, publish `dist`, and avoid caching `mockServiceWorker.js`. No environment variables are needed. Deployment must be authorized and performed against the solution's own repository/account, never the original challenge remote. After publishing, verify assets, MSW interception, a completed registration, both ledger tabs, refresh, and a mobile session at the returned public URL. Verified runtime revision: `4771d73`, including accessibility and memory corrections. Subsequent documentation commits record public verification.
 
 ## Evidence and remaining work
 
@@ -101,7 +101,7 @@ Final validation on 2026-11-26: 42 unit tests passed; the complete optimized-bui
 - [Roadmap](docs/ROADMAP.md)
 - [Required accessibility verification](docs/ACCESSIBILITY.md)
 - [Final optimized-build browser report](docs/evidence/browser-report/index.html)
-- [Public smoke HTML report](docs/evidence/public-smoke.html)
+- [Public smoke HTML report](docs/evidence/public-browser-report/index.html)
 - [Performance measurements and limitations](docs/PERFORMANCE.md)
 
 ## Asset credits
