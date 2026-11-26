@@ -158,3 +158,19 @@ describe('REST persistence and ranking contracts', () => {
     expect(results[0].items.some(record => results[1].items.some(other => other.id === record.id))).toBe(false);
   });
 });
+
+
+it('preserves pre-cap-removal records and keeps their ranking configuration separate', async () => {
+  const legacy = {
+    ...makeRecord('legacy-capped-match'),
+    config: { ...structuredClone(DEFAULT_CONFIG), spawn: { ...DEFAULT_CONFIG.spawn, maxEnemies: 36 } },
+  };
+  const current = makeRecord('uncapped-match');
+  expect(parseRecords(JSON.stringify([legacy]))).toEqual([legacy]);
+  expect(configurationKey(legacy.config)).not.toBe(configurationKey(current.config));
+  enqueueMatch(legacy);
+  await registerMatch(legacy);
+  await registerMatch(current);
+  expect(readRecords(STORAGE_KEYS.confirmed).map(record => record.id).sort()).toEqual(['legacy-capped-match', 'uncapped-match']);
+  expect(readRecords(STORAGE_KEYS.pending)).toHaveLength(0);
+});

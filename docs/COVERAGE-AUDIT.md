@@ -47,3 +47,7 @@ Run `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`, and `npm r
 Final optimized-build suite: **53 passed, one intentional desktop multitouch skip**, 2.6 minutes. All 42 unit tests, typecheck, lint and build passed. The [HTML report](evidence/browser-report/index.html) includes measured contrast attachments. Memory findings and the fixed diagnostic response streams are recorded in PERFORMANCE.md.
 
 An earlier development run was interrupted by a source-formatting reload; its [trace](evidence/interrupted-dev-trace.zip) is preserved. Early optimized accessibility attempts exposed test startup/font races, corrected by waiting for the mounted interface and loaded fonts before input or measurement. The final suite ran against an unchanged optimized build without these failures.
+
+## Continuous spawn correction — 2026-11-26
+
+Removed the arbitrary 36-enemy cap. The new Core cases verify all 179 one-second arrivals before the end of a 180-second stationary stress fixture, safe deterministic fallback, deferred blocked arrivals, pause/disposal, and previous-record compatibility in Data. All **46 unit tests** and **53 optimized browser tests** passed, with one intentional desktop multitouch duplicate skipped. No visual baseline updates were needed. Typecheck, lint and build passed. Reports: [unit JSON](evidence/spawn-unit.json), [browser HTML](evidence/spawn-browser-report/index.html).

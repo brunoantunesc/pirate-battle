@@ -28,7 +28,7 @@ Player weapons are independent: one frontal shot, or three equally spaced parall
 
 Both enemy types turn toward pursuit headings at bounded angular speed and move forward. If an island intersects the pursuit corridor, the AI chooses a tangent steering heading with a configured safety margin. This is local avoidance, not a global path planner; more elaborate obstacle layouts may need navigation improvements. Ship-to-ship solid-body resolution is not implemented because the specification only requires island and arena blocking, plus Chaser contact damage.
 
-Shooters approach until their stop range, then fire while within attack range and angular tolerance. Chasers continue pursuit until collision. Spawns alternate types, sample arena edges with a seeded generator, reject obstacles, overlapping enemies and positions within 310 pixels of the player, and retry within a bounded attempt count. A 36-enemy cap protects responsiveness; an interval can produce no spawn when the cap or safety constraints prevent one. This is an explicit trade-off against unlimited spawning and needs evaluation under the shortest spawn setting.
+Shooters approach until their stop range, then fire while within attack range and angular tolerance. Chasers continue pursuit until collision. Spawns alternate types and first sample arena edges with a seeded generator, rejecting obstacles, overlapping enemies and positions within 310 pixels of the player. If the bounded random attempts fail, a deterministic half-radius-spaced search checks the perimeter and then the arena interior. There is no arbitrary live-enemy cap; duration and spawn interval bound the number of scheduled arrivals. If no sampled safe location exists, the arrival remains pending and is retried at the next interval, potentially alongside a newly due arrival. This avoids unsafe spawns, silently dropped arrivals and repeated full searches every frame. The grid is not a mathematical proof that every possible free point will be found. A stationary 180-second stress fixture verifies all 179 pre-end arrivals at the shortest supported interval, with collision and safety checks.
 
 Default player speed is 190 px/s versus 95 for Chasers and 75 for Shooters, allowing escape and repositioning. A 20-HP player shot takes two hits to defeat a 40-HP Chaser or three for a 60-HP Shooter; a successful triple broadside can sink a Shooter. Player HP is 100, Chaser damage 22, and enemy projectile damage 12. The 0.38-second frontal cooldown supports aiming; independent 1.1-second broadsides reward positioning. The default three-second alternating arrivals ensure both types appear early. All balance values and units live in `config.ts`.
 
@@ -74,7 +74,7 @@ LocalStorage is the mock service's persistence mechanism, so there is no true mu
 
 ## Testing and evidence
 
-The current `npm test` run passes 42 tests: 23 simulation tests and 19 Axios/MSW/data tests. Pure simulation fixtures position entities to test geometry and invariants; browser combat tests must instead use real controls. Unit coverage includes 30/60/120 FPS equivalence, immutable config, pause, swept collisions, weapons, scoring, AI, lifecycle/disposal, outbox recovery, idempotent timeout, configuration pagination, malformed persistence, endpoint failures, and seeded delays.
+The current `npm test` run passes 46 tests: 26 simulation tests and 20 Axios/MSW/data tests. Pure simulation fixtures position entities to test geometry and invariants; browser combat tests must instead use real controls. Unit coverage includes 30/60/120 FPS equivalence, immutable config, pause, swept collisions, weapons, scoring, AI, lifecycle/disposal, outbox recovery, idempotent timeout, configuration pagination, malformed persistence, endpoint failures, and seeded delays.
 
 Playwright runs desktop Chromium and Pixel 7 emulation with isolated contexts, HTML reports and failure traces. The latest optimized-build suite passed 53 cases with one intentional desktop multitouch duplicate skipped; the mobile multitouch case passed. All twelve official groups are mapped in `docs/COVERAGE-AUDIT.md`. Six versioned menu/arena/results baselines passed comparison. The public deployment separately passed 24 checks, including accessibility and network recovery. Versioned reports are linked in README.
 
@@ -82,7 +82,7 @@ Playwright runs desktop Chromium and Pixel 7 emulation with isolated contexts, H
 
 ## Remaining limitations and delivery checks
 
-- The current 36-enemy spawn cap and exhausted random spawn attempts can skip an interval; G14 tracks the required correction.
+- When no sampled safe position is available, an arrival is deferred to the next interval; the default arena and supported timing are covered by the 179-enemy stress fixture.
 - A separate clean-checkout installation/build/browser verification remains pending (E07).
 - Physical mobile hardware, actual screen-reader speech, OS-level tab hiding, GPU allocation and process RSS are not covered by the recorded automated evidence. Browser visibility signals, required accessibility semantics and reference-environment performance are covered.
 - CSS uses one stylesheet with scoped class names rather than CSS Modules; CSS Modules are a project preference, not an official challenge requirement.

@@ -6,7 +6,7 @@ export interface ShipTuning { hp: number; speed: number; turnSpeed: number; radi
  * All durations, lifetimes and cooldowns are seconds of active simulation time.
  * All distances/ranges are logical pixels; angles/tolerances are radians.
  * Projectile range is speed × life (1104 player / 644 enemy pixels by default).
- * Counts (attempts, maxEnemies) are integers; damage uses hit points.
+ * Random spawn attempts are integer counts; damage uses hit points.
  */
 export interface GameConfig {
   duration: number;
@@ -18,7 +18,7 @@ export interface GameConfig {
   shooter: ShipTuning & { range: number; stopRange: number; cooldown: number; aimTolerance: number };
   projectile: { speed: number; enemySpeed: number; damage: number; enemyDamage: number; radius: number; life: number };
   weapons: { frontCooldown: number; sideCooldown: number; broadsideSpacing: number; muzzleGap: number };
-  spawn: { sequence: ('chaser' | 'shooter')[]; minDistance: number; attempts: number; edgeInset: number; maxEnemies: number };
+  spawn: { sequence: ('chaser' | 'shooter')[]; minDistance: number; attempts: number; edgeInset: number };
   physics: { timestep: number; maxFrameTime: number; avoidanceDistance: number; avoidanceMargin: number; avoidanceAngle: number };
   effects: { shotLife: number; hitLife: number; explosionLife: number; flashLife: number };
 }
@@ -35,7 +35,7 @@ export const DEFAULT_CONFIG: GameConfig = {
   shooter: { hp: 60, speed: 75, turnSpeed: 1.4, radius: 24, range: 390, stopRange: 230, cooldown: 1.9, aimTolerance: 0.18 },
   projectile: { speed: 480, enemySpeed: 280, damage: 20, enemyDamage: 12, radius: 5, life: 2.3 },
   weapons: { frontCooldown: 0.38, sideCooldown: 1.1, broadsideSpacing: 17, muzzleGap: 8 },
-  spawn: { sequence: ['chaser', 'shooter'], minDistance: 310, attempts: 40, edgeInset: 36, maxEnemies: 36 },
+  spawn: { sequence: ['chaser', 'shooter'], minDistance: 310, attempts: 40, edgeInset: 36 },
   physics: { timestep: 1 / 60, maxFrameTime: 0.25, avoidanceDistance: 100, avoidanceMargin: 16, avoidanceAngle: 0.15 },
   effects: { shotLife: 0.15, hitLife: 0.24, explosionLife: 0.65, flashLife: 0.15 },
 };

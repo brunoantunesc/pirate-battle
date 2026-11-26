@@ -7,11 +7,11 @@ Updated 2026-11-26. The original estimate was two working days. The currently pu
 | Phase                      | Status                               | Evidence / remaining scope                                                                                                        |
 | -------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | 0 Discovery and foundation | Verified                             | Original specification and supplied assets preserved; strict TypeScript and build tooling pass                                    |
-| 1 Core gameplay            | Implemented; spawn follow-up open    | Movement, combat, collisions, AI and lifecycle tests pass; G14 tracks the 36-enemy cap and skipped spawn intervals                |
+| 1 Core gameplay            | Verified spawning follow-up    | Movement, combat, collisions, AI and lifecycle tests pass; G14 verifies cap removal, safe fallback and deferred blocked arrivals                |
 | 2 Rendering and experience | Verified for recorded scope          | Pixi rendering, six visual baselines, desktop/mobile layout, multitouch and required accessibility checks pass                    |
 | 3 Remote data              | Verified                             | Axios/MSW/TanStack Query, pagination, failure states, persistent outbox and timeout idempotency tests pass                        |
 | 4 Quality assurance        | Verified for recorded scope          | 42 unit tests; 53 optimized-build browser tests passed, one intentional desktop-only duplicate skipped                            |
-| 5 Delivery                 | Published; final handoff checks open | 24 public checks passed; profiling and reports versioned; repository publication and clean-checkout validation tracked separately |
+| 5 Delivery                 | Published; final handoff checks open | 24 public checks passed; profiling and reports versioned; public GitHub repository available; clean-checkout validation remains |
 
 ## Ordered final handoff
 
@@ -36,3 +36,9 @@ Physical devices, spoken screen-reader output, OS-level visibility changes and G
 - **2026-11-26:** required accessibility and memory follow-up completed; current suite reached 53 passed / one intentional skip and public validation reached 24 passed. These results supersede the earlier partial milestones.
 
 The supplied assets originate from upstream commit `315891441be81ca0bff75cf3c2b0cd2f27f119cd`. Original assets are preserved; the reference checkout is ignored.
+
+## Safe-spawn correction
+
+The correction is developed in an isolated worktree while the public demo, GitHub master and delivery-ready-2026-11-26 tag retain the verified previous runtime. The arbitrary 36-enemy cap is removed. Safe fallback and queued blocked arrivals are tested; 46 unit cases pass, including 179 simultaneous stationary enemies and backward compatibility for previous capped match records. The final clean-checkout check remains the last planned step.
+
+The isolated spawn correction passed typecheck, lint, build, all 46 unit tests and all 53 browser checks (one intentional skip), including unchanged visual baselines. It is ready for promotion; clean-checkout verification remains last.

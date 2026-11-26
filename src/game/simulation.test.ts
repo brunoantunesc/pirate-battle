@@ -238,3 +238,67 @@ describe('enemy behavior and match lifecycle', () => {
     expect(fresh.state.enemies).toHaveLength(0); expect(fresh.state.score).toBe(0);
   });
 });
+
+
+describe('continuous safe spawning', () => {
+  function stationaryConfig() {
+    const config = createConfig(180, 1);
+    config.chaser.speed = 0;
+    config.shooter.speed = 0;
+    config.shooter.range = 0;
+    return config;
+  }
+
+  it('keeps every one-second arrival through a full match beyond 36 live enemies', () => {
+    const sim = new GameSimulation(stationaryConfig(), 42);
+    for (let second = 1; second < 180; second++) {
+      ticks(sim, 1);
+      expect(sim.state.enemies, 'arrival at second ' + second).toHaveLength(second);
+      const spawned = sim.state.enemies[second - 1];
+      expect(spawned.kind).toBe(second % 2 ? 'chaser' : 'shooter');
+      expect(Math.hypot(spawned.x - sim.state.player.x, spawned.y - sim.state.player.y)).toBeGreaterThanOrEqual(sim.config.spawn.minDistance);
+      for (const island of sim.config.islands) expect(Math.hypot(spawned.x - island.x, spawned.y - island.y)).toBeGreaterThan(spawned.radius + island.radius);
+      for (const other of sim.state.enemies.slice(0, -1)) expect(Math.hypot(spawned.x - other.x, spawned.y - other.y)).toBeGreaterThan(spawned.radius + other.radius);
+      expect(spawned.x).toBeGreaterThanOrEqual(spawned.radius);
+      expect(spawned.x).toBeLessThanOrEqual(sim.config.arena.width - spawned.radius);
+      expect(spawned.y).toBeGreaterThanOrEqual(spawned.radius);
+      expect(spawned.y).toBeLessThanOrEqual(sim.config.arena.height - spawned.radius);
+    }
+    ticks(sim, 1);
+    expect(sim.state.reason).toBe('time');
+    expect(sim.state.enemies).toHaveLength(179);
+    const ended = sim.snapshot();
+    ticks(sim, 5);
+    expect(sim.snapshot()).toEqual(ended);
+  });
+
+  it('finds a safe fallback when its seeded random candidate is blocked', () => {
+    const config = stationaryConfig();
+    config.spawn.attempts = 1;
+    const probe = new GameSimulation(config, 2);
+    ticks(probe, 1);
+    const candidate = probe.state.enemies[0];
+    config.islands.push({ x: candidate.x, y: candidate.y, radius: 40 });
+    const sim = new GameSimulation(config, 2);
+    ticks(sim, 1);
+    expect(sim.state.enemies).toHaveLength(1);
+    const spawned = sim.state.enemies[0];
+    expect(Math.hypot(spawned.x - candidate.x, spawned.y - candidate.y)).toBeGreaterThan(spawned.radius + 40);
+  });
+
+  it('defers a blocked arrival without losing it and freezes that debt during pause', () => {
+    const sim = new GameSimulation(stationaryConfig(), 2);
+    const blocker = enemy(9000, 'shooter', 600, 360);
+    blocker.radius = 2000;
+    sim.state.enemies.push(blocker);
+    ticks(sim, 1);
+    expect(sim.state.enemies).toHaveLength(1);
+    sim.state.enemies = [];
+    sim.pause(); ticks(sim, 5);
+    expect(sim.state.enemies).toHaveLength(0);
+    sim.resume(); ticks(sim, 1);
+    expect(sim.state.enemies.map(ship => ship.kind)).toEqual(['chaser', 'shooter']);
+    sim.dispose(); ticks(sim, 5);
+    expect(sim.state.enemies).toHaveLength(0);
+  });
+});

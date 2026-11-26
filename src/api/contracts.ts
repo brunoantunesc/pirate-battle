@@ -41,8 +41,7 @@ export function isGameConfig(value: unknown): value is GameConfig {
     value.weapons.frontCooldown > 0 && value.weapons.sideCooldown > 0 && value.shooter.cooldown > 0 &&
     value.physics.timestep > 0 && value.physics.maxFrameTime >= value.physics.timestep &&
     value.spawn.sequence.length > 0 && value.spawn.sequence.every(kind => kind === 'chaser' || kind === 'shooter') &&
-    Number.isInteger(value.spawn.attempts) && value.spawn.attempts > 0 &&
-    Number.isInteger(value.spawn.maxEnemies) && value.spawn.maxEnemies > 0;
+    Number.isInteger(value.spawn.attempts) && value.spawn.attempts > 0;
 }
 
 /** Object key order must not split otherwise equivalent configurations. */

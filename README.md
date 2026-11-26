@@ -37,7 +37,7 @@ Desktop and mobile layouts support portrait and landscape; landscape is recommen
 
 Options exposes **Game session time** (60–180 seconds) and **Enemy spawn time** (1–15 seconds). Defaults are 120 and 3 seconds. Saved options apply to the next match; each active match captures an immutable configuration snapshot.
 
-All balance parameters are in `src/game/config.ts`: hit points, logical pixels, radians, seconds, weapon damage, speeds, cooldowns, spawn sequence and safety distance. The default spawn sequence alternates Chaser and Shooter. The player has 100 HP, frontal cooldown is 0.38 seconds, and each broadside cooldown is 1.1 seconds. Islands block ships and shots. Matches end on death or active-time expiry.
+All balance parameters are in `src/game/config.ts`: hit points, logical pixels, radians, seconds, weapon damage, speeds, cooldowns, spawn sequence and safety distance. The default spawn sequence alternates Chaser and Shooter. There is no live-enemy cap; a deterministic safe-position search backs up random spawning, and blocked arrivals are retained for the next interval. The player has 100 HP, frontal cooldown is 0.38 seconds, and each broadside cooldown is 1.1 seconds. Islands block ships and shots. Matches end on death or active-time expiry.
 
 ## Ranking and history
 
@@ -93,16 +93,18 @@ For deterministic combat tests use `/?test=1`. The opt-in `window.__pirateTest` 
 
 The repository includes `vercel.json`: build with `npm run build`, publish `dist`, and avoid caching `mockServiceWorker.js`. No environment variables are needed. Deployment must be authorized and performed against the solution's own repository/account, never the original challenge remote. After publishing, verify assets, MSW interception, a completed registration, both ledger tabs, refresh, and a mobile session at the returned public URL. Verified runtime revision: `4771d73`, including accessibility and memory corrections. Subsequent documentation commits record public verification.
 
-## Evidence and remaining work
+## Evidence and validation scope
 
-Final validation on 2026-11-26: 42 unit tests passed; the complete optimized-build browser suite passed 53 cases with one intentional desktop multitouch skip. Typecheck, lint and production build passed. See docs/COVERAGE-AUDIT.md for all twelve official groups and explicit evidence limits. Production profiling and public deployment are complete. A real 180-second match measured 59.97 FPS / 16.70 ms P95 on RTX 3060, and 15.37 FPS with software rendering. A subsequent retaining-path audit found and corrected unused MSW diagnostic streams: native MessagePorts now remain at 2 across five real cycles. Compilation and debugger-history growth are classified separately in the report. See the performance report for scope and limitations.
+Final validation on 2026-11-26: 46 unit tests passed; the complete optimized-build browser suite passed 53 cases with one intentional desktop multitouch skip. Typecheck, lint and production build passed. See docs/COVERAGE-AUDIT.md for all twelve official groups and explicit evidence limits. Production profiling and public deployment are complete. A real 180-second match measured 59.97 FPS / 16.70 ms P95 on RTX 3060, and 15.37 FPS with software rendering. A subsequent retaining-path audit found and corrected unused MSW diagnostic streams: native MessagePorts now remain at 2 across five real cycles. Compilation and debugger-history growth are classified separately in the report. See the performance report for scope and limitations.
 
 - [Official challenge, preserved verbatim](docs/CHALLENGE.md)
 - [Requirement checklist and evidence](docs/REQUIREMENTS.md)
 - [Architecture, balance, and trade-offs](ARCHITECTURE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Required accessibility verification](docs/ACCESSIBILITY.md)
-- [Final optimized-build browser report](docs/evidence/browser-report/index.html)
+- [Spawn correction unit report](docs/evidence/spawn-unit.json)
+- [Spawn correction browser report](docs/evidence/spawn-browser-report/index.html)
+- [Previous optimized-build browser report](docs/evidence/browser-report/index.html)
 - [Public smoke HTML report](docs/evidence/public-browser-report/index.html)
 - [Performance measurements and limitations](docs/PERFORMANCE.md)
 

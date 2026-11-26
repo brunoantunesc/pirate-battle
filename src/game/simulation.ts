@@ -61,6 +61,7 @@ export class GameSimulation {
   private nextId = 1;
   private spawnClock = 0;
   private spawnIndex = 0;
+  private pendingSpawns = 0;
 
   constructor(config: GameConfig = DEFAULT_CONFIG, seed = 1) {
     this.config = freezeConfig(config);
@@ -77,6 +78,7 @@ export class GameSimulation {
     this.clearInput();
     this.accumulator = 0;
     this.spawnClock = 0;
+    this.pendingSpawns = 0;
     this.state.status = 'disposed';
     this.state.enemies = [];
     this.state.projectiles = [];
@@ -123,7 +125,10 @@ export class GameSimulation {
     if (s.time + 1e-9 >= c.duration) { s.time = c.duration; this.end('time'); return; }
     while (this.spawnClock + 1e-9 >= c.spawnInterval) {
       this.spawnClock -= c.spawnInterval;
-      this.spawnEnemy();
+      this.pendingSpawns++;
+      // Preserve due arrivals if every safe position is temporarily occupied.
+      // Retry on the next interval, avoiding a full arena search on every frame.
+      while (this.pendingSpawns > 0 && this.spawnEnemy()) this.pendingSpawns--;
     }
   }
 
@@ -240,22 +245,43 @@ export class GameSimulation {
     } else if (enemy.kind === 'shooter' && separation <= c.shooter.range && Math.abs(normalizeAngle(directAngle - enemy.angle)) <= c.shooter.aimTolerance) this.fire(enemy, 'front');
   }
 
-  private spawnEnemy() {
+  private spawnEnemy(): boolean {
     const c = this.config;
-    if (this.state.enemies.length >= c.spawn.maxEnemies || c.spawn.sequence.length === 0) return;
+    if (c.spawn.sequence.length === 0) return false;
     const kind = c.spawn.sequence[this.spawnIndex % c.spawn.sequence.length];
-    const inset = Math.max(c.spawn.edgeInset, c[kind].radius);
-    for (let attempt = 0; attempt < c.spawn.attempts; attempt++) {
-      const edge = Math.floor(this.random() * 4);
-      const x = edge === 0 ? inset : edge === 1 ? c.arena.width - inset : inset + this.random() * (c.arena.width - inset * 2);
-      const y = edge === 2 ? inset : edge === 3 ? c.arena.height - inset : inset + this.random() * (c.arena.height - inset * 2);
+    const radius = c[kind].radius;
+    const inset = Math.max(c.spawn.edgeInset, radius);
+    const maxX = c.arena.width - inset, maxY = c.arena.height - inset;
+    const place = (x: number, y: number): boolean => {
       const point = { x, y };
-      if (distance(point, this.state.player) < c.spawn.minDistance) continue;
-      if (c.islands.some(island => distance(point, island) <= island.radius + c[kind].radius)) continue;
-      if (this.state.enemies.some(enemy => distance(point, enemy) <= enemy.radius + c[kind].radius)) continue;
+      if (distance(point, this.state.player) < c.spawn.minDistance) return false;
+      if (c.islands.some(island => distance(point, island) <= island.radius + radius)) return false;
+      if (this.state.enemies.some(enemy => distance(point, enemy) <= enemy.radius + radius)) return false;
       this.state.enemies.push(this.makeShip(kind, x, y, Math.atan2(this.state.player.y - y, this.state.player.x - x)));
       this.spawnIndex++;
-      return;
+      return true;
+    };
+    for (let attempt = 0; attempt < c.spawn.attempts; attempt++) {
+      const edge = Math.floor(this.random() * 4);
+      const x = edge === 0 ? inset : edge === 1 ? maxX : inset + this.random() * (c.arena.width - inset * 2);
+      const y = edge === 2 ? inset : edge === 3 ? maxY : inset + this.random() * (c.arena.height - inset * 2);
+      if (place(x, y)) return true;
     }
+    // Seeded edge sampling remains the usual path. A deterministic half-radius-spaced
+    // search prevents unlucky random attempts or crowded edges dropping arrivals.
+    // Arena and match duration bound the work; no arbitrary live-enemy cap applies.
+    const searchStep = radius / 2;
+    for (let x = inset; x <= maxX; x += searchStep) {
+      if (place(x, inset) || place(x, maxY)) return true;
+    }
+    for (let y = inset; y <= maxY; y += searchStep) {
+      if (place(inset, y) || place(maxX, y)) return true;
+    }
+    for (let y = inset + searchStep; y < maxY; y += searchStep) {
+      for (let x = inset + radius; x < maxX; x += searchStep) {
+        if (place(x, y)) return true;
+      }
+    }
+    return false;
   }
 }
